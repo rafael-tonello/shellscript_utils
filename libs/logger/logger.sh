@@ -1,7 +1,7 @@
-_this_logname=""
 _this_logToTerminal=1
 _this_logfile=""
 _this_alowedloglevels=""
+_this_scriptDirectory=""
 
 
 #name, levelNumber, [ascii_scape_color]
@@ -36,9 +36,9 @@ createLogLevel "CRITICAL" 60 '\033[0;31m'
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 
-#logname, [log_levels_def_$INFO], [log to terminal, 1_or_0_def_1], [logfile]
+#loggerLibDirectory, [log_levels_def_$INFO], [log to terminal, 1_or_0_def_1], [logfile]
 this_init(){
-    _this_logname=$1
+    _this_scriptDirectory=$1
     _this_alowedloglevels=$2
     _this_logToTerminal=$3
     _this_logfile=$4
@@ -54,17 +54,18 @@ this_init(){
     return 0
 }
 
-#level, text, [is_an_err_default 0]
+#name, level, text, [is_an_err_default 0]
 this_log(){
-    level=$1
-    data=$2
-    isError=$3
+    name=$1
+    level=$2
+    data=$3
+    isError=$4
 
     if [ "$_this_alowedloglevels" -gt "$level" ]; then
         return 0
     fi
     
-    header=$(_this_lineHeader $level $_this_logname)
+    header=$(_this_lineHeader $level $name)
     headerSize=${#header}
     data=$(_this_identData "$data" $headerSize)
     line=$header$data
@@ -87,6 +88,7 @@ this_log(){
 #level
 _this_write_color_begin()
 {
+    level=$1
     eval "if [ \"\$LVLCOLOR_$level\" != \"\" ]; then printf \$LVLCOLOR_$level; fi"
     return 0
 }
@@ -98,39 +100,39 @@ _this_write_color_end()
 }
 
 
-#text
+#name, text
 this_trace(){
-    this_log $TRACE "$1"
+    this_log "$1" $TRACE "$2"
     return 0
 }
 
-#text
+#name, text
 this_debug(){
-    this_log $DEBUG "$1"
+    this_log "$1" $DEBUG "$2"
     return 0
 }
 
-#text
+#name, text
 this_info(){
-    this_log $INFO "$1"
+    this_log "$1" $INFO "$2"
     return 0
 }
 
-#text
+#name, text
 this_warning(){
-    this_log $WARNING "$1"
+    this_log "$1" $WARNING "$2"
     return 0
 }
 
-#text
+#name, text
 this_error(){
-    this_log $ERROR "$1" 1
+    this_log "$1" $ERROR "$2"
     return 0
 }
 
-#text
+#name, text
 this_critical(){
-    this_log $CRITICAL $1 1
+    this_log "$1" $CRITICAL "$2"
     return 0
 }
 
@@ -162,4 +164,43 @@ _this_identData(){
 _this_level_to_string(){
     eval "echo \$LVLSTR_$1"
     return 0
+}
+
+#logName, object_name
+this_newNLog(){
+    log_name=$1
+    object_name=$2
+    new_f "$_this_scriptDirectory"/_nammedlog.sh "$object_name"
+
+    #eval "\"$object_name\"_init \"$log_name\""
+    "$object_name"_init this "$log_name"
+
+    return 0
+}
+
+#logName, command
+this_intercept()
+{
+    logName=$1
+    command=$2
+    file="/tmp/__intercept__tmp__"$RANDOM"__"
+    fileErr="/tmp/__intercept__tmp__"$RANDOM"__"
+    rm -f $file
+    $command > $file 2> $fileErr
+    result=$?
+    stdout=$(cat "$file")
+    stderr=$(cat "$fileErr")
+
+    if [ "$stdout" != "" ]; then
+        this_info "$logName" "$stdout"
+    fi;
+
+    if [ "$stderr" != "" ]; then
+        this_error "$logName" "$stderr"
+    fi;
+
+    rm -f $file
+    rm -f $fileErr
+
+    return $result
 }

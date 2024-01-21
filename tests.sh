@@ -2,8 +2,12 @@
 source "./libs/new.sh"
 
 main(){
-    new_f "./libs/logger.sh" log
-    log_init main $trace  1 "./testTmpFiles/tests.log"
+    new_f "./libs/logger/logger.sh" loggerObj
+    loggerObj_init "./libs/logger/" $trace  1 "./testTmpFiles/tests.log"
+    loggerObj_newNLog main log
+
+    log_intercept "ping www.google.com.br -c 5"
+    log_intercept "ping www.google.cam.br -c 5"
 
     log_debug "initializing SSH Manager instance"
     new_f "./libs/SSHManager.sh" test

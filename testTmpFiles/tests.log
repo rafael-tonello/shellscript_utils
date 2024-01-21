@@ -258,3 +258,402 @@ result:  > Error starting the ssh library
 [2024-01-20 12:01:48-0300][ERROR][main] Error starting the ssh library↩
                                         ↪Error: ssh connetion cannot be made to the destination
                                         
+[2024-01-21 12:01:06-0300][DEBUG][initializing] 
+[2024-01-21 12:01:09-0300][ERROR][Error] 
+[2024-01-21 12:01:14-0300][DEBUG][main] initializing
+[2024-01-21 12:01:17-0300][ERROR][main] Error
+[2024-01-21 12:01:36-0300][DEBUG][main] initializing SSH Manager instance
+[2024-01-21 12:01:38-0300][ERROR][main] Error starting the ssh library↩
+                                        ↪Error: ssh connetion cannot be made to the destination
+                                        
+[2024-01-21 12:01:26-0300][DEBUG][main] initializing SSH Manager instance
+[2024-01-21 12:01:28-0300][ERROR][main] Error starting the ssh library↩
+                                        ↪Error: ssh connetion cannot be made to the destination
+                                        
+[2024-01-21 12:01:54-0300][DEBUG][main] initializing SSH Manager instance
+[2024-01-21 12:01:57-0300][ERROR][main] Error starting the ssh library↩
+                                        ↪Error: ssh connetion cannot be made to the destination
+                                        
+[2024-01-21 12:01:05-0300][INFO][mainhe] ping: invalid option -- '1'
+
+Usage
+  ping [options] <destination>
+
+Options:
+  <destination>      dns name or ip address
+  -a                 use audible ping
+  -A                 use adaptive ping
+  -B                 sticky source address
+  -c <count>         stop after <count> replies
+  -D                 print timestamps
+  -d                 use SO_DEBUG socket option
+  -f                 flood ping
+  -h                 print help and exit
+  -I <interface>     either interface name or address
+  -i <interval>      seconds between sending each packet
+  -L                 suppress loopback of multicast packets
+  -l <preload>       send <preload> number of packages while waiting replies
+  -m <mark>          tag the packets going out
+  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want>
+  -n                 no dns name resolution
+  -O                 report outstanding replies
+  -p <pattern>       contents of padding byte
+  -q                 quiet output
+  -Q <tclass>        use quality of service <tclass> bits
+  -s <size>          use <size> as number of data bytes to be sent
+  -S <size>          use <size> as SO_SNDBUF socket option value
+  -t <ttl>           define time to live
+  -U                 print user-to-user latency
+  -v                 verbose output
+  -V                 print version and exit
+  -w <deadline>      reply wait <deadline> in seconds
+  -W <timeout>       time to wait for response
+
+IPv4 options:
+  -4                 use IPv4
+  -b                 allow pinging broadcast
+  -R                 record route
+  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|tsprespec>
+
+IPv6 options:
+  -6                 use IPv6
+  -F <flowlabel>     define flow label, default is random
+  -N <nodeinfo opt>  use icmp6 node info query, try <help> as argument
+
+For more details see ping(8).
+[2024-01-21 12:01:05-0300][ERROR][mainhe] ping: invalid option -- '1'
+
+Usage
+  ping [options] <destination>
+
+Options:
+  <destination>      dns name or ip address
+  -a                 use audible ping
+  -A                 use adaptive ping
+  -B                 sticky source address
+  -c <count>         stop after <count> replies
+  -D                 print timestamps
+  -d                 use SO_DEBUG socket option
+  -f                 flood ping
+  -h                 print help and exit
+  -I <interface>     either interface name or address
+  -i <interval>      seconds between sending each packet
+  -L                 suppress loopback of multicast packets
+  -l <preload>       send <preload> number of packages while waiting replies
+  -m <mark>          tag the packets going out
+  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want>
+  -n                 no dns name resolution
+  -O                 report outstanding replies
+  -p <pattern>       contents of padding byte
+  -q                 quiet output
+  -Q <tclass>        use quality of service <tclass> bits
+  -s <size>          use <size> as number of data bytes to be sent
+  -S <size>          use <size> as SO_SNDBUF socket option value
+  -t <ttl>           define time to live
+  -U                 print user-to-user latency
+  -v                 verbose output
+  -V                 print version and exit
+  -w <deadline>      reply wait <deadline> in seconds
+  -W <timeout>       time to wait for response
+
+IPv4 options:
+  -4                 use IPv4
+  -b                 allow pinging broadcast
+  -R                 record route
+  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|tsprespec>
+
+IPv6 options:
+  -6                 use IPv6
+  -F <flowlabel>     define flow label, default is random
+  -N <nodeinfo opt>  use icmp6 node info query, try <help> as argument
+
+For more details see ping(8).
+[2024-01-21 12:01:23-0300][INFO][mainhe] ping: www.google.com.bt: Name or service not known
+[2024-01-21 12:01:23-0300][ERROR][mainhe] ping: www.google.com.bt: Name or service not known
+[2024-01-21 12:01:37-0300][INFO][mainhe] PING www.google.com.br (142.251.129.99) 56(124) bytes of data.
+
+--- www.google.com.br ping statistics ---
+63 packets transmitted, 0 received, 100[2024-01-21 12:01:37-0300][ERROR][mainhe] PING www.google.com.br (142.251.129.99) 56(124) bytes of data.
+
+--- www.google.com.br ping statistics ---
+63 packets transmitted, 0 received, 100[2024-01-21 12:01:36-0300][INFO][mainhe] PING www.google.com.br (142.251.129.99) 56(84) bytes of data.
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=1 ttl=128 time=39.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=2 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=3 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=4 ttl=128 time=43.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=5 ttl=128 time=41.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=6 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=7 ttl=128 time=41.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=8 ttl=128 time=40.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=9 ttl=128 time=41.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=10 ttl=128 time=41.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=11 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=12 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=13 ttl=128 time=39.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=14 ttl=128 time=44.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=15 ttl=128 time=47.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=16 ttl=128 time=56.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=17 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=18 ttl=128 time=39.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=19 ttl=128 time=40.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=20 ttl=128 time=47.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=21 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=22 ttl=128 time=79.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=23 ttl=128 time=39.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=24 ttl=128 time=182 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=25 ttl=128 time=51.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=26 ttl=128 time=39.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=27 ttl=128 time=39.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=28 ttl=128 time=319 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=29 ttl=128 time=272 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=30 ttl=128 time=57.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=31 ttl=128 time=52.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=32 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=33 ttl=128 time=40.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=34 ttl=128 time=39.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=35 ttl=128 time=39.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=36 ttl=128 time=143 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=37 ttl=128 time=42.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=38 ttl=128 time=44.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=39 ttl=128 time=41.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=40 ttl=128 time=42.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=41 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=42 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=43 ttl=128 time=149 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=44 ttl=128 time=156 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=45 ttl=128 time=83.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=46 ttl=128 time=99.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=47 ttl=128 time=148 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=48 ttl=128 time=70.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=49 ttl=128 time=174 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=50 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=51 ttl=128 time=48.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=52 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=53 ttl=128 time=43.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=54 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=55 ttl=128 time=39.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=56 ttl=128 time=42.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=57 ttl=128 time=45.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=58 ttl=128 time=42.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=59 ttl=128 time=39.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=60 ttl=128 time=40.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=61 ttl=128 time=31.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=62 ttl=128 time=40.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=63 ttl=128 time=41.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=64 ttl=128 time=39.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=65 ttl=128 time=48.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=66 ttl=128 time=48.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=67 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=68 ttl=128 time=41.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=69 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=70 ttl=128 time=38.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=71 ttl=128 time=41.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=72 ttl=128 time=39.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=73 ttl=128 time=42.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=74 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=75 ttl=128 time=40.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=76 ttl=128 time=41.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=77 ttl=128 time=39.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=78 ttl=128 time=39.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=79 ttl=128 time=40.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=80 ttl=128 time=46.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=81 ttl=128 time=42.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=82 ttl=128 time=40.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=83 ttl=128 time=47.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=84 ttl=128 time=39.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=85 ttl=128 time=47.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=86 ttl=128 time=41.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=87 ttl=128 time=39.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=88 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=89 ttl=128 time=46.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=90 ttl=128 time=40.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=91 ttl=128 time=37.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=92 ttl=128 time=39.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=93 ttl=128 time=41.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=94 ttl=128 time=40.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=95 ttl=128 time=43.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=96 ttl=128 time=40.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=97 ttl=128 time=42.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=98 ttl=128 time=41.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=99 ttl=128 time=44.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=100 ttl=128 time=40.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=101 ttl=128 time=42.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=102 ttl=128 time=42.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=103 ttl=128 time=39.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=104 ttl=128 time=40.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=105 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=106 ttl=128 time=46.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=107 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=108 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=109 ttl=128 time=42.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=110 ttl=128 time=42.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=111 ttl=128 time=39.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=112 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=113 ttl=128 time=46.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=114 ttl=128 time=40.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=115 ttl=128 time=39.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=116 ttl=128 time=41.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=117 ttl=128 time=40.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=118 ttl=128 time=40.8 ms
+
+--- www.google.com.br ping statistics ---
+118 packets transmitted, 118 received, 0[2024-01-21 12:01:36-0300][ERROR][mainhe] PING www.google.com.br (142.251.129.99) 56(84) bytes of data.
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=1 ttl=128 time=39.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=2 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=3 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=4 ttl=128 time=43.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=5 ttl=128 time=41.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=6 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=7 ttl=128 time=41.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=8 ttl=128 time=40.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=9 ttl=128 time=41.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=10 ttl=128 time=41.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=11 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=12 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=13 ttl=128 time=39.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=14 ttl=128 time=44.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=15 ttl=128 time=47.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=16 ttl=128 time=56.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=17 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=18 ttl=128 time=39.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=19 ttl=128 time=40.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=20 ttl=128 time=47.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=21 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=22 ttl=128 time=79.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=23 ttl=128 time=39.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=24 ttl=128 time=182 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=25 ttl=128 time=51.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=26 ttl=128 time=39.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=27 ttl=128 time=39.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=28 ttl=128 time=319 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=29 ttl=128 time=272 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=30 ttl=128 time=57.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=31 ttl=128 time=52.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=32 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=33 ttl=128 time=40.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=34 ttl=128 time=39.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=35 ttl=128 time=39.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=36 ttl=128 time=143 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=37 ttl=128 time=42.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=38 ttl=128 time=44.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=39 ttl=128 time=41.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=40 ttl=128 time=42.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=41 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=42 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=43 ttl=128 time=149 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=44 ttl=128 time=156 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=45 ttl=128 time=83.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=46 ttl=128 time=99.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=47 ttl=128 time=148 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=48 ttl=128 time=70.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=49 ttl=128 time=174 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=50 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=51 ttl=128 time=48.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=52 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=53 ttl=128 time=43.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=54 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=55 ttl=128 time=39.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=56 ttl=128 time=42.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=57 ttl=128 time=45.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=58 ttl=128 time=42.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=59 ttl=128 time=39.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=60 ttl=128 time=40.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=61 ttl=128 time=31.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=62 ttl=128 time=40.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=63 ttl=128 time=41.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=64 ttl=128 time=39.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=65 ttl=128 time=48.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=66 ttl=128 time=48.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=67 ttl=128 time=40.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=68 ttl=128 time=41.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=69 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=70 ttl=128 time=38.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=71 ttl=128 time=41.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=72 ttl=128 time=39.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=73 ttl=128 time=42.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=74 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=75 ttl=128 time=40.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=76 ttl=128 time=41.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=77 ttl=128 time=39.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=78 ttl=128 time=39.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=79 ttl=128 time=40.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=80 ttl=128 time=46.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=81 ttl=128 time=42.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=82 ttl=128 time=40.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=83 ttl=128 time=47.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=84 ttl=128 time=39.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=85 ttl=128 time=47.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=86 ttl=128 time=41.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=87 ttl=128 time=39.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=88 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=89 ttl=128 time=46.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=90 ttl=128 time=40.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=91 ttl=128 time=37.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=92 ttl=128 time=39.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=93 ttl=128 time=41.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=94 ttl=128 time=40.4 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=95 ttl=128 time=43.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=96 ttl=128 time=40.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=97 ttl=128 time=42.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=98 ttl=128 time=41.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=99 ttl=128 time=44.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=100 ttl=128 time=40.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=101 ttl=128 time=42.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=102 ttl=128 time=42.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=103 ttl=128 time=39.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=104 ttl=128 time=40.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=105 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=106 ttl=128 time=46.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=107 ttl=128 time=40.0 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=108 ttl=128 time=40.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=109 ttl=128 time=42.7 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=110 ttl=128 time=42.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=111 ttl=128 time=39.8 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=112 ttl=128 time=40.2 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=113 ttl=128 time=46.9 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=114 ttl=128 time=40.6 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=115 ttl=128 time=39.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=116 ttl=128 time=41.5 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=117 ttl=128 time=40.1 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=118 ttl=128 time=40.8 ms
+
+--- www.google.com.br ping statistics ---
+118 packets transmitted, 118 received, 0[2024-01-21 12:01:09-0300][INFO][main] PING www.google.com.br (142.251.129.99) 56(84) bytes of data.
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=1 ttl=128 time=40.3 ms
+64 bytes from gru14s30-in-f3.1e100.net (142.251.129.99): icmp_seq=2 ttl=128 time=41.6 ms
+
+--- www.google.com.br ping statistics ---
+2 packets transmitted, 2 received, 0[2024-01-21 12:01:34-0300][ERROR][main] ping: www.google.cam.br: Name or service not known
+[2024-01-21 12:01:17-0300][INFO][main] PING www.google.com.br (142.250.219.3) 56(84) bytes of data.
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=1 ttl=128 time=40.6 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=2 ttl=128 time=39.9 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=3 ttl=128 time=45.8 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=4 ttl=128 time=43.1 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=5 ttl=128 time=39.5 ms
+
+--- www.google.com.br ping statistics ---
+5 packets transmitted, 5 received, 0[2024-01-21 12:01:21-0300][INFO][main] PING www.google.com.br (142.250.219.3) 56(84) bytes of data.
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=1 ttl=128 time=48.6 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=2 ttl=128 time=43.5 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=3 ttl=128 time=41.2 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=4 ttl=128 time=39.2 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=5 ttl=128 time=46.3 ms
+
+--- www.google.com.br ping statistics ---
+5 packets transmitted, 5 received, 0[2024-01-21 12:01:21-0300][DEBUG][main] initializing SSH Manager instance
+[2024-01-21 12:01:23-0300][ERROR][main] Error starting the ssh library↩
+                                        ↪Error: ssh connetion cannot be made to the destination
+                                        
+[2024-01-21 12:01:31-0300][INFO][main] PING www.google.com.br (142.250.219.3) 56(84) bytes of data.
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=1 ttl=128 time=50.8 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=2 ttl=128 time=45.4 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=3 ttl=128 time=46.5 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=4 ttl=128 time=41.5 ms
+64 bytes from gru14s27-in-f3.1e100.net (142.250.219.3): icmp_seq=5 ttl=128 time=41.0 ms
+
+--- www.google.com.br ping statistics ---
+5 packets transmitted, 5 received, 0[2024-01-21 12:01:31-0300][ERROR][main] ping: www.google.cam.br: Name or service not known
+[2024-01-21 12:01:31-0300][DEBUG][main] initializing SSH Manager instance
+[2024-01-21 12:01:33-0300][ERROR][main] Error starting the ssh library↩
+                                        ↪Error: ssh connetion cannot be made to the destination
+                                        
