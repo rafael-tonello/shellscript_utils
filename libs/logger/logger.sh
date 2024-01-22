@@ -54,6 +54,8 @@ this_init(){
     return 0
 }
 
+this_finalize(){ echo; }
+
 #name, level, text, [is_an_err_default 0]
 this_log(){
     name=$1
@@ -72,6 +74,7 @@ this_log(){
     if [ "$_this_logToTerminal" == "1" ]; then
         _this_write_color_begin $level
         if [ "$isError" ==  "" ]; then
+            echo $line
             >&2 printf "$line\n"
         else
             printf "$line\n"
@@ -185,7 +188,6 @@ this_intercept()
     command=$2
     file="/tmp/__intercept__tmp__"$RANDOM"__"
     fileErr="/tmp/__intercept__tmp__"$RANDOM"__"
-    rm -f $file
     $command > $file 2> $fileErr
     result=$?
     stdout=$(cat "$file")

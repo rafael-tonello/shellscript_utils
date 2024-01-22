@@ -7,6 +7,7 @@ this_init(){
     _this_logName=$2
 }
 
+this_finalize(){ echo; }
 
 #level, text, [is_an_err_default 0]
 this_log(){
