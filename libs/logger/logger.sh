@@ -73,8 +73,7 @@ this_log(){
     line=$header$data
     if [ "$_this_logToTerminal" == "1" ]; then
         _this_write_color_begin $level
-        if [ "$isError" ==  "" ]; then
-            echo $line
+        if [ "$isError" ==  "1" ]; then
             >&2 printf "$line\n"
         else
             printf "$line\n"
