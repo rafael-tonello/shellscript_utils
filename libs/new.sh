@@ -26,7 +26,7 @@
 #class,name
 
 #newF new object from a class in the [className].sh file
-#className, ObjectName
+#className, ObjectName, [self/this keyworkd. default is 'this']
 new_cf()
 {
     class=$1
@@ -42,8 +42,13 @@ new_f()
 {
     fileName=$1
     name=$2
+    thiskey="this"
+    if [ "$3" != "" ]; then
+        thiskey=$3
+    fi;
+
     rm -f "$fileName.c.sh"
-    awk "{gsub(/this/, \"$name\"); print}" $fileName > $fileName.c.sh
+    awk "{gsub(/$thiskey/, \"$name\"); print}" $fileName > $fileName.c.sh
 
     chmod +x "$fileName.c.sh"
 
