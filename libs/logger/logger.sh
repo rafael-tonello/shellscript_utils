@@ -3,7 +3,6 @@ _this_logfile=""
 _this_alowedloglevels=""
 _this_scriptDirectory=""
 
-
 #name, levelNumber, [ascii_scape_color]
 createLogLevel()
 {
@@ -36,12 +35,13 @@ createLogLevel "CRITICAL" 60 '\033[0;31m'
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 
-#loggerLibDirectory, [log_levels_def_$INFO], [log to terminal, 1_or_0_def_1], [logfile]
+#loggerLibDirectory, [log_levels_def_$INFO], [log to terminal, 1_or_0_def_1], [logfile], [ident_data_default_1]
 this_init(){
     _this_scriptDirectory=$1
     _this_alowedloglevels=$2
     _this_logToTerminal=$3
     _this_logfile=$4
+    _this_identData=$5
 
     if [ "$_this_logToTerminal" == "" ]; then
         _this_logToTerminal=1
@@ -51,39 +51,61 @@ this_init(){
         _this_alowedloglevels=$INFO
     fi
 
+    if [ "$_this_identData" == "" ]; then
+        _this_identData=1
+    fi
+
     return 0
 }
 
 this_finalize(){ echo; }
 
-#name, level, text, [is_an_err_default 0]
+#name, level, text, [break_line_default_1], [is_an_err_default 0]
+_this_lastBreakLine="\n"
 this_log(){
     name=$1
     level=$2
     data=$3
-    isError=$4
+    breakLine=$4
+    isError=$5
+
+    if [ "$breakLine" == "" ] || [ "$breakLine" == "1" ] || [ "$breakLine" == "true" ]; then
+        breakLine="\n"
+    elif [ "$breakLine" == "0" ] || [ "$breakLine" == "false" ]; then
+        breakLine=""
+    fi
+
 
     if [ "$_this_alowedloglevels" -gt "$level" ]; then
         return 0
     fi
     
-    header=$(_this_lineHeader $level $name)
-    headerSize=${#header}
-    data=$(_this_identData "$data" $headerSize)
-    line=$header$data
+    header=""
+    if [ "$_this_lastBreakLine" == "\n" ]; then
+        header=$(_this_lineHeader $level $name)
+        headerSize=${#header}
+    fi
+
+    _this_lastBreakLine=$breakLine
+    
+    if [ "$_this_identData" == "1" ]; then
+        data=$(_this_identData "$data" $headerSize)
+    fi
+        
+    line=$header$data$breakLine
     if [ "$_this_logToTerminal" == "1" ]; then
         _this_write_color_begin $level
         if [ "$isError" ==  "1" ]; then
-            >&2 printf "$line\n"
+            >&2 printf "$line"
         else
-            printf "$line\n"
+            printf "$line"
         fi
 
         _this_write_color_end
     fi
 
     if [ "$_this_logfile" != "" ]; then
-        printf "$line\n" >> $_this_logfile
+        printf "$line" >> $_this_logfile
     fi
 }
 
@@ -102,39 +124,39 @@ _this_write_color_end()
 }
 
 
-#name, text
+#name, text, [break_line_default_1]
 this_trace(){
-    this_log "$1" $TRACE "$2"
+    this_log "$1" $TRACE "$2" $3
     return 0
 }
 
-#name, text
+#name, text, [break_line_default_1]
 this_debug(){
-    this_log "$1" $DEBUG "$2"
+    this_log "$1" $DEBUG "$2" $3
     return 0
 }
 
-#name, text
+#name, text, [break_line_default_1]
 this_info(){
-    this_log "$1" $INFO "$2"
+    this_log "$1" $INFO "$2" $3
     return 0
 }
 
-#name, text
+#name, text, [break_line_default_1]
 this_warning(){
-    this_log "$1" $WARNING "$2"
+    this_log "$1" $WARNING "$2" $3
     return 0
 }
 
-#name, text
+#name, text, [break_line_default_1]
 this_error(){
-    this_log "$1" $ERROR "$2"
+    this_log "$1" $ERROR "$2" $3 1
     return 0
 }
 
-#name, text
+#name, text, [break_line_default_1]
 this_critical(){
-    this_log "$1" $CRITICAL "$2"
+    this_log "$1" $CRITICAL "$2" $3 1
     return 0
 }
 

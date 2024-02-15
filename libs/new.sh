@@ -1,32 +1,12 @@
-
-#class_obj="
-#    this_name=test;
-#    this_age=20;
-#    this_show(){ \
-#        echo name is \$this_name and age is \$this_age; 
-#    };
-#    this_changeName(){ 
-#        this_name=\$1;
-#    }
-#"
-#
-#main()
-#{
-#    new class_obj tmpobj
-#    tmpobj_name=anotherName
-#    tmpobj_show
-#
-#    tmpobj_changeName newName
-#    tmpobj_show
-#
-#}
-#
-#main
-
-#class,name
+#!/bin/bash
+# this  file  was  written to allow a kind of Object Orientation in bash script. Basically, 
+# the  functions  in  this file load a file (.sh) and replaces all ocurrences of 'this' (or
+# other placeholder) with the name of an object, creating a entire 'namespace' or variables
+# and  functions  that  can  be  called like we do within OO. Bash do not allow use of '.', 
+# so you need to use '_' instead.
 
 #newF new object from a class in the [className].sh file
-#className, ObjectName, [self/this keyworkd. default is 'this']
+#className, ObjectName
 new_cf()
 {
     class=$1
@@ -50,9 +30,11 @@ new_f()
     rm -f "$fileName.c.sh"
     awk "{gsub(/$thiskey/, \"$name\"); print}" $fileName > $fileName.c.sh
 
+    awk "{gsub(/\"->\"/, \"_\"); print}" $fileName.c.sh > $fileName.c.sh
+
     chmod +x "$fileName.c.sh"
 
-    source "$fileName.c.sh"
+    source "$fileName.c.sh" new "$name"
     rm "$fileName.c.sh"
 }
 
