@@ -30,13 +30,14 @@ new_f()
     fi;
 
     rm -f "$fileName.c.sh"
-    awk "{gsub(/$thiskey/, \"$name\"); print}" $fileName > $fileName.c.sh
+    awk "{gsub(/$thiskey/, \"$name\"); print}" $fileName > $fileName.c.sh2
 
-    awk "{gsub(/\"->\"/, \"_\"); print}" $fileName.c.sh > $fileName.c.sh
+    awk "{gsub(/\"->\"/, \"_\"); print}" $fileName.c.sh2 > $fileName.c.sh
 
     chmod +x "$fileName.c.sh"
 
     source "$fileName.c.sh" new "$name"
+    rm "$fileName.c.sh2"
     rm "$fileName.c.sh"
 }
 
