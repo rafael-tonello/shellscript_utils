@@ -5,6 +5,8 @@
 # and  functions  that  can  be  called like we do within OO. Bash do not allow use of '.', 
 # so you need to use '_' instead.
 
+#this file is  in: https://github.com/rafael-tonello/shellscript_utils
+
 #newF new object from a class in the [className].sh file
 #className, ObjectName
 new_cf()
