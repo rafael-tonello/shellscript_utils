@@ -44,9 +44,9 @@ new_f()
 
     rm -f "$fileName.c.sh" 2>/dev/null
     rm -f "$fileName.c.sh2" 2>/dev/null
-
-    awk "{gsub(/$thiskey/, \"$name\"); print}" $fileName > $fileName.c.sh2
-    awk "{gsub(/"\-\>"/, \"_\"); print}" $fileName.c.sh2 > $fileName.c.sh
+    
+    awk "{gsub(/$thiskey/, \"$name\"); print}" "$fileName" > "$fileName.c.sh2"
+    awk "{gsub(/"\-\>"/, \"_\"); print}" "$fileName.c.sh2" > "$fileName.c.sh"
 
     chmod +x "$fileName.c.sh"
 
@@ -65,7 +65,7 @@ new_f()
 
     source "$fileName.c.sh" new "$name" "$scriptDir"
     if [ "$auto_call_init" == "1" ]; then
-        eval "$name_init '$auto_call_init_arguments'"
+        eval "$name""_init '$auto_call_init_arguments'"
     fi
 
 }
