@@ -52,7 +52,7 @@ new_f()
 
     (__new_f_tmp(){
         sleep 1
-        cd "$ret"
+        cd "$ret" 2>/dev/null
         rm "$fileName.c.sh2" 2>/dev/null
         rm "$fileName.c.sh" 2>/dev/null
     }; __new_f_tmp &)
