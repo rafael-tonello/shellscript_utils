@@ -1,19 +1,24 @@
-
-
+#!/bin/bash
+if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' function in the file 'https://github.com/rafael-tonello/shellscript_utils/blob/main/libs/new.sh'"; exit 1; fi
 
 #remote_host, username, pasword, use_sudo_0or1
-this_init() { 
-    this_host=$1
-    this_username=$2
-    this_password=$3
+
+dirname=$3
+echo "$dirname"
+new_f "$dirname/../strutils.sh" this->strUtils
+
+this->init() { 
+    this->host=$1
+    this->username=$2
+    this->password=$3
 
     if [ "$4" == "1" ]; then
-        this_useSudo="sudo";
+        this->useSudo="sudo";
     fi
 
-    _this_testConnection
+    _this->testConnection
     if [ "$?" != "0" ]; then
-        _r="Error: ssh connetion cannot be made to the destination -> $_r"
+        _r="Error: ssh connetion cannot be made to the destination ==> $_r"
         echo $_r
         return 1
     fi
@@ -21,18 +26,18 @@ this_init() {
     return 0;
 }
 
-_this_testConnection(){
-    ping -c 1 $this_host > /dev/null 2>/dev/null
+_this->testConnection(){
+    ping -c 1 $this->host > /dev/null 2>/dev/null
     local ping_result=$?
     if [ "$ping_result" != "0" ]; then
-        _r="The destination host is unreachable"
+        _r="The destination host ($this->host) is unreachable"
 
         return $ping_result
     else
-        this_runCmd "echo"
+        this->runCmd "echo"
         local echo_result=$?
         if [ "$echo_result" != "0" ]; then
-            _r="Error running a test command on remote host"
+            _r="Error running a test command on remote host ($this->host) ==> $_error"
             return $echo_result
         fi;
     fi
@@ -40,35 +45,79 @@ _this_testConnection(){
 }
 
 #cmd
-this_runCmd(){
-    #echo "Running: sshpass -p \"$this_password\" /usr/bin/ssh $this_username@$this_host \"$this_useSudo $1\""
-    sshpass -p "$this_password" /usr/bin/ssh $this_username@$this_host "$this_useSudo $1"
+this->runCmd(){
+    #echo "Running: sshpass -p \"$this->password\" /usr/bin/ssh $this->username@$this->host \"$this->useSudo $1\""
+    rm /tmp/runCmdResult >/dev/null 2> /dev/null
+    (sshpass -p "$this->password" /usr/bin/ssh $this->username@$this->host "$this->useSudo $1") > /tmp/runCmdResult 2> /tmp/runCmdResult
+    local _retCode=$?
+    _r=$(cat /tmp/runCmdResult)
+    this->strUtils->getOnly "$_r" "abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_=> " #removes some line returns and other strange chars from ssh output
+    #_r=$_r
+    if [ "$_retCode" != "0" ]; then
+        _error=$_r
+        if [[ $_error == *"Permission denied"* ]]; then
+            _error=$_r
+            _error="$_error (username or password may be wrong or another authentication error may have occurred)"
+        fi
+        _r=""
+    fi
 
+    return $_retCode
+}
+
+#remote_origin, remote_destination
+this->moveRemote(){ 
+    local origin=$1
+    local dest=$2
+    #sshpass -p ${this->password} /usr/bin/ssh $this->username@$this->host "$this->useSudo mv '$1' '$2'.bak";
+    this->runCmd "mv '$origin' '$dest'"
     return $?
 }
 
 #remote_origin, remote_destination
-this_moveRemote(){ 
+this->uploadFolder(){
     local origin=$1
     local dest=$2
-    #sshpass -p ${this_password} /usr/bin/ssh $this_username@$this_host "$this_useSudo mv '$1' '$2'.bak";
-    this_runCmd "mv '$origin' '$dest'"
+    sshpass -p $this->password /usr/bin/scp -r "$origin" $this->username@$this->host:"$dest"
     return $?
 }
 
 #remote_origin, remote_destination
-this_uploadFolder(){
+this->uploadFile(){
     local origin=$1
     local dest=$2
-    sshpass -p $this_password /usr/bin/scp -r "$origin" $this_username@$this_host:"$dest"
+    this->runCmd "mkdir -p '$dest'"
+    sshpass -p $this->password /usr/bin/scp "$origin" $this->username@$this->host:"'$dest'"
     return $?
 }
 
-#remote_origin, remote_destination
-this_uploadFile(){
-    local origin=$1
-    local dest=$2
-    this_runCmd "mkdir -p '$dest'"
-    sshpass -p $this_password /usr/bin/scp "$origin" $this_username@$this_host:"'$dest'"
-    return $?
+
+#_this_get_onlye(source, [valid_chars])
+_this_get_only(){
+    # Define the original string and the valid characters
+    original_string=$1
+    valid_characters=$2
+
+    if [ "$valid_characters" == "" ]; then
+        valid_characters="abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_"
+    fi
+
+    # Initialize an empty string to store the valid characters
+    valid_string=""
+
+    # Iterate through each character in the original string
+    for ((i=0; i<${#original_string}; i++)); do
+        # Get the character at position i
+        char="${original_string:i:1}"
+        
+        # Check if the character is present in the valid characters string
+        if [[ $valid_characters == *"$char"* ]]; then
+            # If present, append it to the valid string
+            valid_string+="$char"
+        fi
+    done
+
+    # Print the valid string
+    _r=$valid_string
+    return 0
 }
