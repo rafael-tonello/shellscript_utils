@@ -52,15 +52,15 @@ new_f()
 
     (__new_f_tmp(){
         sleep 1
-        cd $ret
+        cd "$ret"
         rm "$fileName.c.sh2" 2>/dev/null
         rm "$fileName.c.sh" 2>/dev/null
     }; __new_f_tmp &)
 
     if [[ "$fileName" == "/"* ]]; then
-        scriptDir=$(dirname $fileName)
+        scriptDir="$(dirname $fileName)"
     else
-        scriptDir=$(dirname "$currDir/$fileName")
+        scriptDir="$(dirname "$currDir/$fileName")"
     fi
 
     source "$fileName.c.sh" new "$name" "$scriptDir"
