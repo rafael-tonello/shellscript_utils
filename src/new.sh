@@ -7,6 +7,11 @@
 
 #this file is in: https://github.com/rafael-tonello/shellscript_utils
 
+#the script will be loaded with threse arguments:
+#   $1: 'new' string
+#   $2: the name of the object
+#   $3: the directory where the script is running (run path)
+
 #new object from a class in a [fileName].sh file
 #fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments]
 new_f()
@@ -17,7 +22,7 @@ new_f()
     auto_call_init=$4
     auto_call_init_arguments=$5
     thiskey="this"
-
+    
 
     if [ "$fileName" == "http"* ]; then
         #check if curl is present
@@ -43,19 +48,14 @@ new_f()
     fi;
 
     rm -f "$fileName.c.sh" 2>/dev/null
-    rm -f "$fileName.c.sh2" 2>/dev/null
+
+    cp "$fileName" "$fileName.c.sh"
     
-    awk "{gsub(/$thiskey/, \"$name\"); print}" "$fileName" > "$fileName.c.sh2"
-    awk "{gsub(/"\-\>"/, \"_\"); print}" "$fileName.c.sh2" > "$fileName.c.sh"
+    sed -i "s/->/_/g" "$fileName.c.sh"
+    sed -i "s/$thiskey\_/$name\_/g" "$fileName.c.sh"
 
     chmod +x "$fileName.c.sh"
 
-    (__new_f_tmp(){
-        sleep 1
-        cd "$ret" 2>/dev/null
-        rm "$fileName.c.sh2" 2>/dev/null
-        rm "$fileName.c.sh" 2>/dev/null
-    }; __new_f_tmp &)
 
     if [[ "$fileName" == "/"* ]]; then
         scriptDir="$(dirname $fileName)"
@@ -63,10 +63,23 @@ new_f()
         scriptDir="$(dirname "$currDir/$fileName")"
     fi
 
+    (__new_f_tmp(){
+        return
+        sleep 0.25
+        cd "$ret" 2>/dev/null
+        rm "$fileName.c.sh" 2>/dev/null
+    }; __new_f_tmp &)
+
+    #create a variable with the name of the object. The value is the filename of the object
+    eval "$name=\$scriptDir\$fileName"
+
     source "$fileName.c.sh" new "$name" "$scriptDir"
+
     if [ "$auto_call_init" == "1" ]; then
         eval "$name""_init '$auto_call_init_arguments'"
+        return $?
     fi
+    return 0
 
 }
 

@@ -32,3 +32,39 @@ this->getOnly(){
     _r=$valid_string
     return 0
 }
+
+#replaces all ocureneces of 'every' in 'in' with  each one remain function arguments
+#example: replace "%%" "the key is %% and key is %%" "key" "value" -> "the key is key and key is value
+replace(){ 
+    local every=$1;
+    shift; local in=$1;
+    shift; local result=$in;
+    for arg; do
+        result=$(echo $result | sed "s/$every/$arg/");
+    done;
+    echo $result;
+}
+
+#use echo instead _r
+this->replace_2(){
+    this->replace "${@}"
+    echo $_r
+}
+
+
+this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
+    local index=$(expr index "$source" "$separator")
+
+    # Cortando a string com base na posição do separador
+    if [ "$p1_p2" == "2" ]; then
+        _r="${source:index}"
+    else
+        _r="${source:0:index-1}"
+    fi
+}
+
+#use echo instead _r
+this->cut_2(){
+    this->cut "${@}"
+    echo $_r
+}

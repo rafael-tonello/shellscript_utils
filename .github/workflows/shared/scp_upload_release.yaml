@@ -1,0 +1,53 @@
+#this is a github actions workflow file
+name: ShellScriptUtils - upload artifact
+run-name: $${{ github.author }} is uploading an artifact through scp
+on:
+  workflow_call:
+    inputs:
+      destination-filename:
+        required: true
+        type: string
+      username:
+        required: true
+        type: string
+      host:
+        required: true
+        type: string
+    secrets:
+      password:
+        required: true
+        type: string
+      
+jobs:
+  upload-artifact-scp:
+    name: Run tests2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: installing tools
+        run: |
+          echo "Installing tools..."
+          apt update
+          apt install -y sshpass
+
+      - name: saving files to a tar.gz
+        #run tar -czf, excluding .git and .github folders
+        run: |
+          echo "Zipping repository files..."
+          echo "running tar --exclude='./.git' --exclude='./.github' -czf ${{ inputs.destination-filename }}.tar.gz *"
+          tar --exclude='./.git' --exclude='./.github' -czf ${{ inputs.destination-filename }}.tar.gz *
+
+      - name: Upload artifact
+          #sshpass -p raficcha54 scp -o StrictHostKeyChecking=no ShellScriptUtils.tar.gz rafinha_tonello@192.168.100.10:/home/rafinha_tonello/
+        run: |
+          echo "Uploading artifact using scp..."
+          sshpass -p ${{ secrets.password }} scp -o StrictHostKeyChecking=no ${{ inputs.destination-filename }}.tar.gz ${{ inputs.username }}@${{ inputs.host }}:/home/${{ inputs.username }}/
+          if [ $? -ne 0 ]; then
+            echo "Error uploading artifact"
+            exit 1
+          else
+            echo "Artifact uploaded successfully"
+            exit 0
+          fi
