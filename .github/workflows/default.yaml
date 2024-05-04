@@ -1,6 +1,6 @@
 #this is a github actions workflow file
 name: ShellScriptUtils - default CI
-run-name: Running the CI
+run-name: ${{ github.author }} is running the CI
 on:
   push:
     branches:
@@ -9,9 +9,21 @@ on:
 jobs:
   run-tests:
     name: Run tests
-    uses: ./.github/workflows/runtests.yaml
-    with:
-      tests-folder: tests
-      main-script: runtests.sh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y bc
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Running tests
+        run: |
+          echo "Running tests..."
+          cd tests
+          chmod +x ./runtests.sh
+          ./runtests.sh
 
     

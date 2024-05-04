@@ -12,14 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - name: Run tests
-        uses: ./.github/workflows/runtests.yaml
-        with:
-          tests-folder: tests
-          main-script: runtests.sh
-
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y bc
+
+      - name: Running tests
+        run: |
+          echo "Running tests..."
+          cd tests
+          chmod +x ./runtests.sh
+          ./runtests.sh
 
       - name: saving files to a tar.gz
         #run tar -czf, excluding .git and .github folders
