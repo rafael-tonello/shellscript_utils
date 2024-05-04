@@ -6,19 +6,18 @@ on:
     tags:
       - 'v*'
 
-jobs:
-  run-tests:
-    name: Run tests
-    uses: ./.github/workflows/runtests.yaml
-    with:
-      tests-folder: tests
-      main-script: runtests.sh
-      
+jobs: 
   prepare-release:
     name: Deploy release
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
+      - name: Run tests
+        uses: ./.github/workflows/runtests.yaml
+        with:
+          tests-folder: tests
+          main-script: runtests.sh
+
       - name: Checkout code
         uses: actions/checkout@v2
 
