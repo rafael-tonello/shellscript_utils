@@ -1,6 +1,6 @@
 #this is a github actions workflow file
 name: ShellScriptUtils - Running tests
-run-name: $${{ github.author }} is running the CI
+run-name: Running the tests
 on:
   workflow_call:
     inputs:

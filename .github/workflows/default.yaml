@@ -1,6 +1,6 @@
 #this is a github actions workflow file
 name: ShellScriptUtils - default CI
-run-name: ${{ github.author }} is running the CI
+run-name: Running the CI
 on:
   push:
     branches:
