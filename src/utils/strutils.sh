@@ -13,29 +13,33 @@ this->getOnly(){
         valid_characters="abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_"
     fi
 
-    # Initialize an empty string to store the valid characters
-    valid_string=""
-
-    # Iterate through each character in the original string
-    for ((i=0; i<${#original_string}; i++)); do
-        # Get the character at position i
-        char="${original_string:i:1}"
-        
-        # Check if the character is present in the valid characters string
-        if [[ $valid_characters == *"$char"* ]]; then
-            # If present, append it to the valid string
-            valid_string+="$char"
-        fi
-    done
+    ## Initialize an empty string to store the valid characters
+    #valid_string=""
+#
+    ## Iterate through each character in the original string
+    #for ((i=0; i<${#original_string}; i++)); do
+    #    # Get the character at position i
+    #    char="${original_string:i:1}"
+    #    
+    #    # Check if the character is present in the valid characters string
+    #    if [[ $valid_characters == *"$char"* ]]; then
+    #        # If present, append it to the valid string
+    #        valid_string+="$char"
+    #    fi
+    #done
 
     # Print the valid string
-    _r=$valid_string
+    echo $original_string | tr -cd "$valid_characters"
     return 0
+}
+
+this->getOnly_2(){
+    _r=$(this->getOnly "${@}")
 }
 
 #replaces all ocureneces of 'every' in 'in' with  each one remain function arguments
 #example: replace "%%" "the key is %% and key is %%" "key" "value" -> "the key is key and key is value
-replace(){ 
+this->replace(){ 
     local every=$1;
     shift; local in=$1;
     shift; local result=$in;
@@ -47,8 +51,7 @@ replace(){
 
 #use echo instead _r
 this->replace_2(){
-    this->replace "${@}"
-    echo $_r
+    _r=$(this->replace "${@}")
 }
 
 
@@ -56,15 +59,16 @@ this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
     local index=$(expr index "$source" "$separator")
 
     # Cortando a string com base na posição do separador
+    local tmp=""
     if [ "$p1_p2" == "2" ]; then
-        _r="${source:index}"
+        tmp="${source:index}"
     else
-        _r="${source:0:index-1}"
+        tmp="${source:0:index-1}"
     fi
+    echo $tmp
 }
 
 #use echo instead _r
 this->cut_2(){
-    this->cut "${@}"
-    echo $_r
+    _r=$(this->cut "${@}")
 }

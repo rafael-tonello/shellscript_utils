@@ -15,8 +15,14 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
+      - name: Install dependencies
+        run: |
+          apt update -y
+          apt install -y bc
+
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Running tests
         run: |
           echo "Running tests..."

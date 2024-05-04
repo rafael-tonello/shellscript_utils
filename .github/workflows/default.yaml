@@ -1,6 +1,6 @@
 #this is a github actions workflow file
-name: ShellScriptUtils_CI
-run-name: $${{ github.author }} is running the CI
+name: ShellScriptUtils - default CI
+run-name: ${{ github.author }} is running the CI
 on:
   push:
     branches:
@@ -9,9 +9,9 @@ on:
 jobs:
   run-tests:
     name: Run tests
-    uses: ./.github/workflows/shared/runtests.yaml
+    uses: ./.github/workflows/runtests.yaml
     with:
       tests-folder: tests
-      main-script: tests.sh
+      main-script: runtests.sh
 
     

@@ -51,7 +51,7 @@ this->runCmd(){
     (sshpass -p "$this->password" /usr/bin/ssh $this->username@$this->host "$this->useSudo $1") > /tmp/runCmdResult 2> /tmp/runCmdResult
     local _retCode=$?
     _r=$(cat /tmp/runCmdResult)
-    this->strUtils->getOnly "$_r" "abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_=> " #removes some line returns and other strange chars from ssh output
+    this->strUtils->getOnly_2 "$_r" "abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_=> " #removes some line returns and other strange chars from ssh output
     #_r=$_r
     if [ "$_retCode" != "0" ]; then
         _error=$_r
