@@ -1,5 +1,5 @@
 if [ "$1" != "new" ]; then
-    source ../src/new.sh "$(pwd)/../src"
+    source ../src/new.sh "../src"
     new_f "$0" __app__ "" 1
     exit $?
 fi

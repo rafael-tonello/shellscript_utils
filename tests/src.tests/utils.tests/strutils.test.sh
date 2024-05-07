@@ -4,12 +4,12 @@
 
 this->scriptLocation=$3
 this->init(){ testsObject=$1;
-    "$testsObject"->registerTest "getOnly should return only valid chars" "this->testGetOnly"
-    "$testsObject"->registerTest "getOnly_2 should return only valid chars" "this->getOnly_2"
-    "$testsObject"->registerTest "replace should replace all ocurrences of a string" "this->testReplace"
-    "$testsObject"->registerTest "replace_2 should replace all ocurrences of a string" "this->replace_2"
-    "$testsObject"->registerTest "cut should return the first part of a string" "this->cut"
-    "$testsObject"->registerTest "cut_2 should return the first part of a string" "this->cut_2"
+    "$testsObject"->registerTest "strutils: getOnly should return only valid chars" "this->testGetOnly"
+    "$testsObject"->registerTest "strutils: getOnly_2 should return only valid chars" "this->getOnly_2"
+    "$testsObject"->registerTest "strutils: replace should replace all ocurrences of a string" "this->testReplace"
+    "$testsObject"->registerTest "strutils: replace_2 should replace all ocurrences of a string" "this->replace_2"
+    "$testsObject"->registerTest "strutils: cut should return the first part of a string" "this->cut"
+    "$testsObject"->registerTest "strutils: cut_2 should return the first part of a string" "this->cut_2"
 }
 
 this->finalize(){

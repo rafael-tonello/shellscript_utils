@@ -69,6 +69,8 @@ new_f()
     else
         scriptDir="$(dirname "$currDir/$fileName")"
     fi
+
+    scriptDir=$(realpath "$scriptDir")
     
     #create a variable with the name of the object. The value is the filename of the object
     eval "$name=\$scriptDir\$fileName"
@@ -127,12 +129,16 @@ _scan_folder_for_classes(){ local dir=$1;
         dir=$(pwd)
     fi
 
+
     _scan_classes "$dir"
     newsh_scanned=1
 }
 
 _scan_classes(){
     local dir=$1
+    if [[ "$dir" != "/"* ]]; then
+        local dir="$(pwd)/$dir"
+    fi
 
     for file in "$dir"/*.sh; do
         #get name of file (without path and the extension)
@@ -142,6 +148,7 @@ _scan_classes(){
 
         
         #add to the list of classes
+        file=$(realpath "$file")
         newsh_classes[$className]="$file"
     done
 

@@ -4,14 +4,14 @@
 
 this->scriptLocation=$3
 this->init(){ testsObject=$1;
-    "$testsObject"->registerTest "should put data in the front (and get it)" "this->testPushFront"
-    "$testsObject"->registerTest "should put data in the back (and get it)" "this->testPushBack"
-    "$testsObject"->registerTest "should get data from the front" "this->testPopFront"
-    "$testsObject"->registerTest "should get data from the back" "this->testPopBack"
-    "$testsObject"->registerTest "should get data from the front only one time" "this->testPopFront_2"
-    "$testsObject"->registerTest "should get data from the back only one time" "this->testPopBack_2"
-    "$testsObject"->registerTest "should store several data up front " "this->testPushFront_2"
-    "$testsObject"->registerTest "should store several data up back " "this->testPushBack_2"
+    "$testsObject"->registerTest "queue: should put data in the front (and get it)" "this->testPushFront"
+    "$testsObject"->registerTest "queue: should put data in the back (and get it)" "this->testPushBack"
+    "$testsObject"->registerTest "queue: should get data from the front" "this->testPopFront"
+    "$testsObject"->registerTest "queue: should get data from the back" "this->testPopBack"
+    "$testsObject"->registerTest "queue: should get data from the front only one time" "this->testPopFront_2"
+    "$testsObject"->registerTest "queue: should get data from the back only one time" "this->testPopBack_2"
+    "$testsObject"->registerTest "queue: should store several data up front " "this->testPushFront_2"
+    "$testsObject"->registerTest "queue: should store several data up back " "this->testPushBack_2"
 
 }
 

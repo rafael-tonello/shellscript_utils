@@ -10,8 +10,8 @@ this->init(){ testsObject=$1;
     #the namespace should be the same as the one used in the tests.sh file)
     #new_f $this->scriptLocation"/../../../tests.sh" this->tests "" 1 "tests"
     
-    "$testsObject"->registerTest "Testing run thread1" "this->testRunThread"
-    "$testsObject"->registerTest "Testing setVar and getVar (multi thread)" "this->testSetAndGet"
+    "$testsObject"->registerTest "threads: Testing run thread1" "this->testRunThread"
+    "$testsObject"->registerTest "threads: Testing setVar and getVar (multi thread)" "this->testSetAndGet"
     
 
     

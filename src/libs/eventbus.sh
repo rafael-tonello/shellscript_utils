@@ -23,17 +23,27 @@ this->on(){ local event=$1; local callback=$2;
     this->_memory->unlockVar "listeners.count"
 }
 
-this->emit(){ local event=$1; local data=$2;
+this->emit(){ local event=$1;
     this->_memory->lockVar "listeners.count"
     local count=$(this->_memory->getVar "listeners.count")
     this->_memory->unlockVar "listeners.count"
     local seqMax=$(( count-1 ))
+    shift;
     for i in $(seq 0 $seqMax); do
         local e=$(this->_memory->getVar "listeners.$i.event")
         local c=$(this->_memory->getVar "listeners.$i.callback")
 
         if [ "$e" == "$event" ]; then
-            eval "$c \"\$data\""
+            
+            local argVars="";
+            local count=0
+            for arg in "$@"; do
+                eval "arg$count=\"$arg\""
+                argVars="$argVars \"\$arg$count\""
+                count=$((count+1))
+            done
+
+            eval "$c $argVars"
         fi
     done
 }

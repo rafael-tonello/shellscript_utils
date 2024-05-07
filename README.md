@@ -7,3 +7,8 @@ These scripts provide various utilities and functions that can be used to stream
 The `new.sh` file is a crucial component of this project. It enables object-oriented-like programming in ShellScripting. The `new_f` function takes a filename and an object name as parameters. It treats the file as a class and creates an object based on it.
 
 Internally, `new_f` replaces all occurrences of 'this->' with the object name, generating a whole set of variables and functions with the same prefix (object name), simulating objects.
+
+
+todo:
+    [ ] use a mutex (var lock/unlock) in eventbus
+    [ ] user a mute (var lock/unlock) in queue

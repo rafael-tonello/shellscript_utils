@@ -4,7 +4,7 @@ if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' f
 _this->logToTerminal=1
 _this->logfile=""
 _this->alowedloglevels=""
-_this->scriptDirectory=""
+_this->scriptDirectory="$3"
 
 #name, levelNumber, [ascii_scape_color]
 createLogLevel()
@@ -38,13 +38,12 @@ createLogLevel "CRITICAL" 60 '\033[0;31m'
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 
-#loggerLibDirectory, [log_levels_def_$INFO], [log to terminal, 1_or_0_def_1], [logfile], [ident_data_default_1]
+#[log_levels_def_$INFO], [log to terminal, 1_or_0_def_1], [logfile], [ident_data_default_1]
 this->init(){
-    _this->scriptDirectory=$1
-    _this->alowedloglevels=$2
-    _this->logToTerminal=$3
-    _this->logfile=$4
-    _this->identData=$5
+    _this->alowedloglevels=$1; shift
+    _this->logToTerminal=$1; shift
+    _this->logfile=$1; shift
+    _this->identData=$1; shift
 
     if [ "$_this->logToTerminal" == "" ]; then
         _this->logToTerminal=1

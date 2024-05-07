@@ -9,11 +9,11 @@ this->init(){ testsObject=$1;
     #the namespace should be the same as the one used in the tests.sh file)
     #new_f $this->scriptLocation"/../../../tests.sh" this->tests "" 1 "tests"
     
-    "$testsObject"->registerTest "Testing setVar" "this->testSetVar"
-    "$testsObject"->registerTest "Testing getVar" "this->testGetVar"
-    "$testsObject"->registerTest "Testing lock/unlock vars" "this->testLockUnLock"
-    "$testsObject"->registerTest "waitForValue" "this->testWaitForValue 0.5"
-    "$testsObject"->registerTest "Testing waitForValue should fail if wait timeout is reached" "_anfn(){
+    "$testsObject"->registerTest "sharedmemory: Testing setVar" "this->testSetVar"
+    "$testsObject"->registerTest "sharedmemory: Testing getVar" "this->testGetVar"
+    "$testsObject"->registerTest "sharedmemory: Testing lock/unlock vars" "this->testLockUnLock"
+    "$testsObject"->registerTest "sharedmemory: waitForValue" "this->testWaitForValue 0.5"
+    "$testsObject"->registerTest "sharedmemory: Testing waitForValue should fail if wait timeout is reached" "_anfn(){
         this->testWaitForValue 1.2
         local retCode=\$?
         #check if errorCode == 0
