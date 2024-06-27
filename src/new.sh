@@ -20,18 +20,21 @@
 project_dir=$1
 
 #new object from a class in a [fileName].sh file
-#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments]
+#fileName, ObjectName, [this_self_string], [auto_call_init], ...(object args)
 new_f()
 {
 	currDir=$(pwd)
     fileName=$1
-    name=$2
+    __className=$2
     auto_call_init=$4
-    auto_call_init_arguments=$5
     thiskey="this"
     if [ "$3" != "" ]; then
         thiskey=$3
     fi;
+
+    if [ "$auto_call_init" == "" ]; then
+        auto_call_init=1
+    fi
     
 
     if [ "$fileName" == "http"* ]; then
@@ -59,7 +62,7 @@ new_f()
 
     cp "$fileName" "$fileName.c.sh"
     sed -i "s/->/_/g" "$fileName.c.sh" 2>/dev/null
-    sed -i "s/$thiskey\_/$name\_/g" "$fileName.c.sh" 2>/dev/null
+    sed -i "s/$thiskey\_/$__className\_/g" "$fileName.c.sh" 2>/dev/null
 
     chmod +x "$fileName.c.sh"
 
@@ -73,7 +76,8 @@ new_f()
     scriptDir=$(realpath "$scriptDir")
     
     #create a variable with the name of the object. The value is the filename of the object
-    eval "$name=\$scriptDir\$fileName"
+    eval "$__className=\$scriptDir\$fileName"
+    eval "$__className""_name=\$__className"
 
     #(__new_f_tmp(){
     #    sleep 0.25
@@ -81,16 +85,13 @@ new_f()
     #    rm "$fileName.c.sh" 2>/dev/null
     #}; __new_f_tmp &)
     
-    source "$fileName.c.sh" new "$name" "$scriptDir"
+    source "$fileName.c.sh" new "$__className" "$scriptDir"
     rm "$fileName.c.sh" 2>/dev/null
 
     if [ "$auto_call_init" == "1" ]; then
-        shift
-        shift
-        shift
-        shift
-        #eval "$name""_init '$auto_call_init_arguments'"
-        eval "$name""_init $@"
+        shift; shift; shift; shift;
+        #echo "initing class $__className with arguments: $@"
+        eval "$__className""_init \"\$@\""
 
         return $?
     fi
@@ -99,7 +100,7 @@ new_f()
 }
 
 #new object from a class in a [fileName].sh file
-#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments]
+#fileName, ObjectName, [this_self_string], [auto_call_init], ... (object args)
 newsh_scanned=0
 declare -Ag newsh_classes
 new () { local className=$1;

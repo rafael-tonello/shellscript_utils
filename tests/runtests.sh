@@ -6,7 +6,7 @@ fi
 
 this->init(){
     new "tests" this->tests "" 1 "tests_namespace"
-    new "utils" this->utils
+    new "utils" this->utils "" 0
     
     echo "initializing tests"
     new_f "./src.tests/sharedmemory.test.sh" this->memoryTests "" 1 "this->tests"
@@ -36,3 +36,25 @@ this->init(){
     return $errorCount
 }
  
+
+
+
+interceptCommandStdout(){ local command=$1; local lambda=$2
+    local output=$(eval $command)
+    local error=$?
+    if [ $error -ne 0 ]; then
+        echo "Error running command: $command"
+        return 1
+    fi
+
+    echo "$output" | while read line; do
+        $lambda "$line"
+    done
+}
+
+#run 'command' and intercept its stdout in real time
+interceptCommandStdout(){ local command=$1; local lambda=$2
+    eval "$command" | while read line; do
+        eval "$lambda \"\$line\""
+    done
+}

@@ -104,3 +104,10 @@ this->printHorizontalLine(){ local centralText=$1; local optionalChar=$2;
 
     echo "$finalText"
 }
+
+#run 'command' and intercept its stdout in real time
+this->interceptCommandStdout(){ local command=$1; local lambda=$2
+    eval "$command" | while read line; do
+        eval "$lambda \"\$line\""
+    done
+}

@@ -11,6 +11,14 @@ this->init(){
 
 this->finalize(){ echo; }
 
+this->getLogName(){
+    echo "$_this->logName"
+}
+
+this->setLogName(){
+    _this->logName=$1
+}
+
 #level, text, [break_line_default_1], [is_an_err_default 0]
 this->log(){
     level=$1
@@ -57,9 +65,14 @@ this->critical(){
     return 0
 }
 
-#command
-this->intercept()
+#loglevel, command, [logNameSuffix] [identifyErrors]
+this->interceptCommandStdout()
 {
-    "$_this->parent"_intercept "$_this->logName" "$1"
+    local logNameSuffix=$3
+    if [ "$logNameSuffix" != "" ]; then
+        logNameSuffix="-${logNameSuffix}"
+    fi
+
+    "$_this->parent"_interceptCommandStdout "$_this->logName$logNameSuffix" "$1" "$2" "$4"
     return $?
 }

@@ -34,7 +34,6 @@ this->emit(){ local event=$1;
         local c=$(this->_memory->getVar "listeners.$i.callback")
 
         if [ "$e" == "$event" ]; then
-            
             local argVars="";
             local count=0
             for arg in "$@"; do

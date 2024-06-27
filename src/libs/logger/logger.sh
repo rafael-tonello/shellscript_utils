@@ -38,12 +38,14 @@ createLogLevel "CRITICAL" 60 '\033[0;31m'
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 
-#[log_levels_def_$INFO], [log to terminal, 1_or_0_def_1], [logfile], [ident_data_default_1]
-this->init(){
-    _this->alowedloglevels=$1; shift
-    _this->logToTerminal=$1; shift
-    _this->logfile=$1; shift
-    _this->identData=$1; shift
+#declare an array of strings
+
+
+#[log_levels_def_$INFO], [ident_data_default_1]
+this->init(){ local alowedloglevels=$1; local identData=$2
+    declare -A _this->writers
+    _this->alowedloglevels=$alowedloglevels
+    _this->identData=$identData
 
     if [ "$_this->logToTerminal" == "" ]; then
         _this->logToTerminal=1
@@ -60,13 +62,41 @@ this->init(){
     return 0
 }
 
+this->init(){
+    _this->alowedloglevels=$1
+    _this->logToTerminal=$2
+    _this->logfile=$3
+    _this->identData=$4
+
+    #echo "initializing logger with args alowedloglevels=$_this->alowedloglevels, logToTerminal=$_this->logToTerminal, logfile=$_this->logfile, identData=$_this->identData"
+
+    if [ "$_this->logToTerminal" == "" ]; then
+        _this->logToTerminal=1
+    fi
+
+    if [ "$_this->alowedloglevels" == "" ]; then
+        _this->alowedloglevels=$INFO
+    fi
+
+    if [ "$_this->identData" == "" ]; then
+        _this->identData=1
+    fi
+
+    return 0
+}
+
+this->addWriter(){ local writer=$1
+    _this->writers+=("$writer")
+    return 0
+}
+
 this->finalize(){ echo; }
 
 #name, level, text, [break_line_default_1], [is_an_err_default 0]
 _this->lastBreakLine="\n"
 this->log(){
     name=$1
-    level=$2
+    local level=$2
     data=$3
     breakLine=$4
     isError=$5
@@ -76,7 +106,6 @@ this->log(){
     elif [ "$breakLine" == "0" ] || [ "$breakLine" == "false" ]; then
         breakLine=""
     fi
-
 
     if [ "$_this->alowedloglevels" -gt "$level" ]; then
         return 0
@@ -95,20 +124,12 @@ this->log(){
     fi
         
     line=$header$data$breakLine
-    if [ "$_this->logToTerminal" == "1" ]; then
-        _this->write_color_begin $level
-        if [ "$isError" ==  "1" ]; then
-            >&2 printf "$line"
-        else
-            printf "$line"
-        fi
 
-        _this->write_color_end
-    fi
+    #scrolls over the writers
+    for writer in "${_this->writers[@]}"; do
+        "$writer"_log "$line" "$level" "$isError"
+    done
 
-    if [ "$_this->logfile" != "" ]; then
-        printf "$line" >> $_this->logfile
-    fi
 }
 
 #level
@@ -125,6 +146,33 @@ _this->write_color_end()
     return 0
 }
 
+#run 'command' and intercept its stdout and stderr in real time
+this->interceptCommandStdout(){ local logSessionName=$1; local level=$2; local command=$3; local _identifyErrors_=$4
+    eval "$command" 2>&1 | while read line; do
+        #check if is error (line contains the word 'error' or 'exception' or 'fail' or 'fatal' or 'critical', case insensitive)
+        if [ "$_identifyErrors_" == "1" ]; then
+            #check if one of the error tokens is in the line
+            local errorTokens="error|ERROR|Error|exception|Exception|EXCEPTION|fail|Fail|FAIL|fatal|Fatal|FATAL|critical|Critical|CRITICAL"
+            local errorTokenIsPresent=0
+            #scrolls over the error tokens
+            for token in $(echo $errorTokens | tr "|" "\n"); do
+                #check if the line contains the token
+                if [[ "$line" == *"$token"* ]]; then
+                    errorTokenIsPresent=1
+                    break
+                fi
+            done
+
+            if [ "$errorTokenIsPresent" == "1" ]; then
+                this->log "$logSessionName" "$ERROR" "$line" 1 1
+            else
+                this->log "$logSessionName" $level "$line"
+            fi
+        else
+            this->log "$logSessionName" $level "$line"
+        fi
+    done
+}
 
 #name, text, [break_line_default_1]
 this->trace(){
@@ -199,33 +247,7 @@ this->newNLog(){
     new_f "$_this->scriptDirectory"/_nammedlog.sh "$object_name"
 
     #eval "\"$object_name\"_init \"$log_name\""
-    "$object_name"_init this "$log_name"
+    "$object_name"_init $this->name "$log_name"
 
     return 0
-}
-
-#logName, command
-this->intercept()
-{
-    logName=$1
-    command=$2
-    file="/tmp/__intercept__tmp__"$RANDOM"__"
-    fileErr="/tmp/__intercept__tmp__"$RANDOM"__"
-    $command > $file 2> $fileErr
-    result=$?
-    stdout=$(cat "$file")
-    stderr=$(cat "$fileErr")
-
-    if [ "$stdout" != "" ]; then
-        this->info "$logName" "$stdout"
-    fi;
-
-    if [ "$stderr" != "" ]; then
-        this->error "$logName" "$stderr"
-    fi;
-
-    rm -f $file
-    rm -f $fileErr
-
-    return $result
 }

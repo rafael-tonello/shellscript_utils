@@ -25,7 +25,7 @@ this->scriptLocation=$3
 this->init(){ local namespace=$1;
     this->_namespace=$namespace
     new_f "$this->scriptLocation/sharedmemory.sh" this->vars "" 1 "$namespace"
-    new_f "$this->scriptLocation/utils/utils.sh" this->utils
+    new_f "$this->scriptLocation/utils/utils.sh" this->utils "" 0
     
     local initialCount=$(this->vars->getVar "__tests.count")
 
@@ -184,7 +184,7 @@ this->showSumarizedTestResults(){
         local resultCode=$(this->vars->getVar "__tests.$i.resultCode")
         local message=$(this->vars->getVar "__tests.$i.message")
 
-        if [ "$resultCode" -ne "0" ]; then
+        if [ "$resultCode" != "" ] && [ "$resultCode" -ne "0" ]; then
             errorCount=$((errorCount+1))
         fi
     done
