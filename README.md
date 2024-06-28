@@ -8,6 +8,9 @@ The `new.sh` file is a crucial component of this project. It enables object-orie
 
 Internally, `new_f` replaces all occurrences of 'this->' with the object name, generating a whole set of variables and functions with the same prefix (object name), simulating objects.
 
+
+
+
 ## the new function
 `new.sh` file also contains the `new` function, that receives only the `filename`, withtout the path. You can even omit the .sh, informing only the classname. The new function automatically find the file of the informed class and instantiate it (internally, the new_f function is called).
 
@@ -55,6 +58,41 @@ fi
     #or
     new "my project/Services/MyService2/utils" "utils"
     
+```
+
+## more things about 'new' function
+The `new` function is a wrapper for `new_f` that receives only the class name, without the path. It automatically finds the file of the class and instantiates it. `new` function will automatically scan the project directory to find the file of the class. The scan will occur in the directory returned by pwd when `new` is called.
+But you can start the scan manually in how many directories you want. You also can specify a 'direcoty folder' when 'sourcing' the new.sh file. In this both cases, `new` function will not scan folder by itself, and will work only with is found in the specified directories.
+
+To start a sacan by your self, call the funciton scan_folder_for_classes or source the file 'new.sh' with a directory as paremeter
+
+
+### some examples
+#### example: using the new.sh file
+```shell script
+#file main.sh
+source "shellscript_utils/new.sh" #loads the new.sh file (do not scan any folder)
+
+new "MyService" "objName" #creates a new instance of 'MyService'. Before instantiate the class, the 'new.sh' file will scan all files in the current directory. If the file 'MyService.sh' is found, it will be instantiated and referenced by the variable 'objName'
+objName->init #calls the 'init' method of the 'objName' object (instance of 'MyService' class)
+```
+
+#### example: using the new.sh file
+```shell script
+#file main.sh
+source "shellscript_utils/new.sh" "my project/Services" #loads the new.sh file and start the scan in the 'my project/Services' folder
+new "MyService" "objName" #creates a new instance of 'MyService' class and store it in the variable 'objName'
+objName->init #calls the 'init' method of the 'objName' object (instance of 'MyService' class)
+```
+
+#### example: using the new.sh file
+```shell script
+#file main.sh
+source "shellscript_utils/new.sh" #loads the new.sh file (do not scan any folder)
+scan_folder_for_classes "my project/Services" #start the scan in the 'my project/Services' folder
+
+new "MyService" "objName"
+objName->init
 ```
 
 
@@ -106,10 +144,47 @@ this->init(){
 
 ```
 
+# inheritance
+yes, you can do a kind of inheritance using new.sh. When a new object is created, its file is 'sources' with some arguments:
+- the first argument is the word 'new', indicating that the file is being 'sourced' by the new.sh file
+- the second argument is the name of the class that is being instantiated
+- the third argument is the name of the object that is being created
 
+to make the inheritance, you need to instantiate the parent class in the beginning of the child class file.
+
+```shell script
+#file parent.sh
+this->doSomething(){
+    echo "doing something"
+}
+
+this->overrideThis(){
+    echo "this is the parent"
+}
+
+#file child.sh
+myName="$2"
+new "parent.sh" myName
+
+this->overrideThis(){
+    echo "this is the child"
+}
+
+#main.sh
+source "shellscript_utils/new.sh"
+new "child" "obj"
+obj->doSomething #will print "doing something"
+obj->overrideThis #will print "this is the child"
 
 ```
-todo:
+
+
+---
+---
+
+# todos and tsklists:
+```
+    todo:
     [ ] use a mutex (var lock/unlock) in eventbus
     [ ] user a mute (var lock/unlock) in queue
 ```

@@ -1,5 +1,6 @@
 if [ "$1" != "new" ]; then
     source ../src/new.sh "../src"
+    scan_folder_for_classes ".."
     new_f "$0" __app__ "" 1
     exit $?
 fi

@@ -20,21 +20,18 @@
 project_dir=$1
 
 #new object from a class in a [fileName].sh file
-#fileName, ObjectName, [this_self_string], [auto_call_init], ...(object args)
+#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments]
 new_f()
 {
 	currDir=$(pwd)
     fileName=$1
-    __className=$2
+    name=$2
     auto_call_init=$4
+    auto_call_init_arguments=$5
     thiskey="this"
     if [ "$3" != "" ]; then
         thiskey=$3
     fi;
-
-    if [ "$auto_call_init" == "" ]; then
-        auto_call_init=1
-    fi
     
 
     if [ "$fileName" == "http"* ]; then
@@ -62,7 +59,7 @@ new_f()
 
     cp "$fileName" "$fileName.c.sh"
     sed -i "s/->/_/g" "$fileName.c.sh" 2>/dev/null
-    sed -i "s/$thiskey\_/$__className\_/g" "$fileName.c.sh" 2>/dev/null
+    sed -i "s/$thiskey\_/$name\_/g" "$fileName.c.sh" 2>/dev/null
 
     chmod +x "$fileName.c.sh"
 
@@ -72,12 +69,9 @@ new_f()
     else
         scriptDir="$(dirname "$currDir/$fileName")"
     fi
-
-    scriptDir=$(realpath "$scriptDir")
     
     #create a variable with the name of the object. The value is the filename of the object
-    eval "$__className=\$scriptDir\$fileName"
-    eval "$__className""_name=\$__className"
+    eval "$name=\$scriptDir\$fileName"
 
     #(__new_f_tmp(){
     #    sleep 0.25
@@ -85,14 +79,11 @@ new_f()
     #    rm "$fileName.c.sh" 2>/dev/null
     #}; __new_f_tmp &)
     
-    source "$fileName.c.sh" new "$__className" "$scriptDir"
+    source "$fileName.c.sh" new "$name" "$scriptDir"
     rm "$fileName.c.sh" 2>/dev/null
 
     if [ "$auto_call_init" == "1" ]; then
-        shift; shift; shift; shift;
-        #echo "initing class $__className with arguments: $@"
-        eval "$__className""_init \"\$@\""
-
+        eval "$name""_init '$auto_call_init_arguments'"
         return $?
     fi
     return 0
@@ -100,63 +91,88 @@ new_f()
 }
 
 #new object from a class in a [fileName].sh file
-#fileName, ObjectName, [this_self_string], [auto_call_init], ... (object args)
+#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments]
 newsh_scanned=0
 declare -Ag newsh_classes
 new () { local className=$1;
     if [ "$newsh_scanned" == "0" ]; then
-        _scan_folder_for_classes
+        scan_folder_for_classes
     fi
 
-    #if classname contains '.sh' at end, remove it
-    className=${className%.sh}
-    className=${className%.SH}
-
-    className=$(fixname $className)
-
-    if [ "${newsh_classes[$className]}" == "" ]; then
-        >&2 echo "Class $className not found"
-        return 1
-    else
-        #remove the first parameter and call new_f
-        shift
-        new_f "${newsh_classes[$className]}" "$@"
+    #add '.sh' to the end of the class name (if not present)
+    if [[ "$className" != *".sh" ]]; then
+        className="$className.sh"
     fi
+
+    #scrolls all newsh_classes to find the class
+    local foundFile=""
+    for i in "${newsh_classes[@]}"; do
+        #check if $className is at end of the current item
+        if [[ "$i" == *"$className" ]]; then
+            foundFile=$i
+            break
+        fi
+    done
+
+    #if not found, remove one parent folder name of className and try again
+    if [ "$foundFile" == "" ]; then
+        >&2 echo "Class $1 not found"
+    fi
+
+    shift
+    new_f "$foundFile" "$@"
+    return $?
 }
 
 #recursive scan .sh files
-_scan_folder_for_classes(){ local dir=$1;
+scan_folder_for_classes(){ local dir=$1; local subfoldersMaxDeep=$2; local canScanThisFolder=$3
     if [ "$dir" == "" ]; then
         dir=$(pwd)
     fi
 
+    if [ "$subfoldersMaxDeep" == "" ]; then
+        subfoldersMaxDeep=1000000
+    fi
 
-    _scan_classes "$dir"
+    if [ "$canScanThisFolder" == "" ]; then
+        canScanThisFolder="__f(){ echo 1; }; __f"
+    fi
+
+    _scan_classes "$dir" $subfoldersMaxDeep "$canScanThisFolder" 0
     newsh_scanned=1
 }
 
-_scan_classes(){
-    local dir=$1
+_scan_classes_count=0
+_scan_classes(){ local dir=$1; local subfoldersMaxDeep=$2; local canScanThisFolder=$3; local _deep=$4
+    #check if _deep is greater than subfoldersMaxDeep
+    if [ "$subfoldersMaxDeep" != "" ] && [ "$_deep" -gt "$subfoldersMaxDeep" ]; then
+        return
+    fi
+
+    #run lambda "canScanThisFolder" to check if can scan this folder
+    local canScan=$(eval "$canScanThisFolder \"\$dir\"")
+    if [ "$canScan" == "0" ]; then
+        return
+    fi
+
+
     if [[ "$dir" != "/"* ]]; then
         local dir="$(pwd)/$dir"
     fi
 
     for file in "$dir"/*.sh; do
-        #get name of file (without path and the extension)
-        className=$(basename "$file")
-        className=${className%.*}
-        className=$(fixname $className)
-
-        
         #add to the list of classes
         file=$(realpath "$file")
-        newsh_classes[$className]="$file"
+        if [ -f "$file" ]; then
+            newsh_classes[$_scan_classes_count]="$file"
+            _scan_classes_count=$(( _scan_classes_count + 1 ))
+        fi
     done
 
     #recursive call with child folders
     for d in "$dir"/*; do
         if [ -d "$d" ]; then
-            _scan_classes "$d"
+            _scan_classes "$d" $subfoldersMaxDeep "$canScanThisFolder" $(( _deep + 1 ))
         fi
     done
 }
@@ -170,5 +186,6 @@ fixname(){ $source; local valid_characters=$2
 }
 
 if [ "$project_dir" != "" ]; then
-    _scan_folder_for_classes "$project_dir"
+    shift
+    scan_folder_for_classes "$project_dir" $@
 fi
