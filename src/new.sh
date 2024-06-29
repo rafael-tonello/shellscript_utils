@@ -188,4 +188,49 @@ fixname(){ $source; local valid_characters=$2
 if [ "$project_dir" != "" ]; then
     shift
     scan_folder_for_classes "$project_dir" $@
+else
+    #do not scan for classes, but define project_dir as $(pwd), because proejct_dir is needed to cache git repositories
+    project_dir=$(pwd)
 fi
+
+
+
+
+import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
+    local cacheFolder="$project_dir/.newshgitrepos"
+    
+
+    if [ "$_commit_" == "" ]; then
+        _commit_="HEAD"
+
+    fi
+    
+    if [ "$_portable_" == "1" ]; then
+        cacheFolder="$HOME/.newshgitrepos"
+    fi
+
+    if [ ! -d "$cacheFolder" ]; then
+        mkdir -p "$cacheFolder"
+    fi
+
+    local gitFolder="$cacheFolder/$(fixname $gitUrl)"
+
+    #clone only the last commit if _commit_ is 'HEAD'
+        _commit_=$(git ls-remote $gitUrl HEAD | cut -f 1)
+    if [ ! -d "$gitFolder" ]; then
+        if [ "$_commit_" == "HEAD" ]; then
+            git clone --depth 1 $gitUrl $gitFolder
+        else
+            git clone $gitUrl $gitFolder
+            git checkout $_commit_
+        fi
+    else
+        local returnFolder=$(pwd)
+        cd $gitFolder
+        git pull
+        cd $returnFolder
+    fi
+
+    scan_folder_for_classes "$gitFolder"
+    return 0
+}
