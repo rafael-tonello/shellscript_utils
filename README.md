@@ -180,7 +180,7 @@ obj->overrideThis #will print "this is the child"
 
 
 # git_import
-The `new.sh` also contains the `git_import` function, that allows you to import files from a git repository. The `git_import` function receives the repository URL and a parameter named '_portable_'. This function will, basically, clone the repositorie in a local folder and scan all .sh files of it.
+The `new.sh` also contains the `git_import` function, that allows you to import files (call new, new_f, ...) from a git repository. The `git_import` function receives the repository URL and a parameter named '_portable_'. This function will, basically, clone the repositorie in a local folder and scan all .sh files of it.
 
 If you pass the '_portable_' parameter with the value 1, the `git_import` will work in a portable way, that is, it will work in a local folder (.newshgitrepos) inside the project folder (the folder returned by 'pwd' when the new.sh file is sourced). If you pass the '_portable_' parameter with the value 0, the `git_import` will work in a global way, using  the folder "~/.newshgitrepos" folder.
 

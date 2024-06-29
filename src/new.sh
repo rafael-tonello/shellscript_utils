@@ -20,14 +20,13 @@
 project_dir=$1
 
 #new object from a class in a [fileName].sh file
-#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments]
+#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments ...]
 new_f()
 {
 	currDir=$(pwd)
     fileName=$1
     name=$2
     auto_call_init=$4
-    auto_call_init_arguments=$5
     thiskey="this"
     if [ "$3" != "" ]; then
         thiskey=$3
@@ -83,7 +82,11 @@ new_f()
     rm "$fileName.c.sh" 2>/dev/null
 
     if [ "$auto_call_init" == "1" ]; then
-        eval "$name""_init '$auto_call_init_arguments'"
+        shift
+        shift
+        shift
+        shift
+        eval "$name""_init" "\$@"
         return $?
     fi
     return 0
@@ -145,6 +148,8 @@ scan_folder_for_classes(){ local dir=$1; local subfoldersMaxDeep=$2; local canSc
 _scan_classes_count=0
 _scan_classes(){ local dir=$1; local subfoldersMaxDeep=$2; local canScanThisFolder=$3; local _deep=$4
     #check if _deep is greater than subfoldersMaxDeep
+    echo _deep $_deep
+    echo subfoldersMaxDeep $subfoldersMaxDeep
     if [ "$subfoldersMaxDeep" != "" ] && [ "$_deep" -gt "$subfoldersMaxDeep" ]; then
         return
     fi
