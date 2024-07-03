@@ -23,15 +23,16 @@ project_dir=$1
 #fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments ...]
 new_f()
 {
-	currDir=$(pwd)
-    fileName=$1
-    name=$2
-    auto_call_init=$4
-    thiskey="this"
+	local currDir=$(pwd)
+    local fileName="$1"
+    local name="$2"
+    local auto_call_init=$4
+    local thiskey="this"
+
+
     if [ "$3" != "" ]; then
         thiskey=$3
     fi;
-    
 
     if [ "$fileName" == "http"* ]; then
         #check if curl is present
@@ -39,7 +40,7 @@ new_f()
             rm -f /tmp/__new_f_downloaded.sh 2>/dev/null
             curl -s $fileName > /tmp/__new_f_downloaded.sh
             fileName=/tmp/__new_f_downloaded.sh
-        #else, looks for wget
+        #else, looks for xwget
         elif ! command -v wget &> /dev/null; then
             rm -f /tmp/__new_f_downloaded.sh 2>/dev/null
             wget -q $fileName -O /tmp/__new_f_downloaded.sh
@@ -57,11 +58,23 @@ new_f()
     rm -f "$fileName.c.sh" 2>/dev/null
 
     cp "$fileName" "$fileName.c.sh"
+    #replace
     sed -i "s/->/_/g" "$fileName.c.sh" 2>/dev/null
     sed -i "s/$thiskey\_/$name\_/g" "$fileName.c.sh" 2>/dev/null
 
-    chmod +x "$fileName.c.sh"
 
+    #awk '{
+    #    while (match($0, /[.][^ ]/)) {
+    #        # Replace the dot with underscore
+    #        $0 = substr($0, 1, RSTART-1) "_" substr($0, RSTART+1)
+    #    }
+    #    print
+    #}' "$fileName.c.sh" > "$fileName.c.sh2"
+#
+    #rm "$fileName.c.sh" 2>/dev/null
+    #mv "$fileName.c.sh2" "$fileName.c.sh"
+
+    chmod +x "$fileName.c.sh"
 
     if [[ "$fileName" == "/"* ]]; then
         scriptDir="$(dirname $fileName)"
@@ -71,13 +84,14 @@ new_f()
     
     #create a variable with the name of the object. The value is the filename of the object
     eval "$name=\$scriptDir\$fileName"
+    eval "$name""_name=\"$name\""
 
     #(__new_f_tmp(){
     #    sleep 0.25
     #    cd "$ret" 2>/dev/null
     #    rm "$fileName.c.sh" 2>/dev/null
     #}; __new_f_tmp &)
-    
+
     source "$fileName.c.sh" new "$name" "$scriptDir"
     rm "$fileName.c.sh" 2>/dev/null
 
@@ -86,7 +100,7 @@ new_f()
         shift
         shift
         shift
-        eval "$name""_init" "\$@"
+        eval "$name""_init \"\$@\""
         return $?
     fi
     return 0
@@ -120,9 +134,13 @@ new () { local className=$1;
     #if not found, remove one parent folder name of className and try again
     if [ "$foundFile" == "" ]; then
         >&2 echo "Class $1 not found"
+        return 1
     fi
 
     shift
+
+    #for over the arguments and call the new_f function
+
     new_f "$foundFile" "$@"
     return $?
 }
@@ -148,8 +166,6 @@ scan_folder_for_classes(){ local dir=$1; local subfoldersMaxDeep=$2; local canSc
 _scan_classes_count=0
 _scan_classes(){ local dir=$1; local subfoldersMaxDeep=$2; local canScanThisFolder=$3; local _deep=$4
     #check if _deep is greater than subfoldersMaxDeep
-    echo _deep $_deep
-    echo subfoldersMaxDeep $subfoldersMaxDeep
     if [ "$subfoldersMaxDeep" != "" ] && [ "$_deep" -gt "$subfoldersMaxDeep" ]; then
         return
     fi
@@ -199,8 +215,6 @@ else
 fi
 
 
-
-
 import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
     local cacheFolder="$project_dir/.newshgitrepos"
     
@@ -239,3 +253,4 @@ import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
     scan_folder_for_classes "$gitFolder"
     return 0
 }
+

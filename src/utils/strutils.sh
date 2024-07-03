@@ -1,6 +1,8 @@
 #!/bin/bash
 if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' function in the file 'new.sh' (of shellscript_utils)"; exit 1; fi
 
+this->alphaNumericChars="abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_"
+
 #getOnly(source, [validChars])
 #   for a given 'source' a new string will be generate with only letters of 'source' that are in 'validChars'.
 #   if 'validChars was not provided, an internal string will be used ("abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_")'
@@ -10,7 +12,7 @@ this->getOnly(){
     valid_characters=$2
 
     if [ "$valid_characters" == "" ]; then
-        valid_characters="abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_"
+        valid_characters=this->alphaNumericChars
     fi
 
     ## Initialize an empty string to store the valid characters
@@ -71,4 +73,27 @@ this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
 #use echo instead _r
 this->cut_2(){
     _r=$(this->cut "${@}")
+}
+
+
+this->split(){ local source=$1; local separator=$2
+    #declare the array
+    _r=()
+
+    while [ true ]; do
+        #find the separator
+        local index=$(expr index "$source" "$separator")
+
+        #if not found, add the source to the array and break the loop
+        if [ "$index" == "0" ]; then
+            _r+=("$source")
+            break
+        fi
+
+        #add the part of the source to the array
+        _r+=("${source:0:index-1}")
+
+        #remove the part of the source
+        source="${source:index}"
+    done
 }

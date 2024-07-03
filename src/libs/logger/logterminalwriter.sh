@@ -1,3 +1,7 @@
+#new "logger" "this->logManager"
+#new "logterminalwriter" "this->logTerminalWriter"
+#this->logManager->addWriter this->logTerminalWriter
+
 this->init(){
     :;
 }

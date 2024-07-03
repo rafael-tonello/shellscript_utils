@@ -1,4 +1,15 @@
 #!/bin/bash
+# example of use
+#       #create the log manager
+#       new "logger" "this->logManager"
+#
+#       #create a log file writer
+#       new "logterminalwriter" "this->logTerminalWriter"
+#
+#       #add the writer to the log manger
+#       this->logManager->addWriter this->logTerminalWriter
+
+
 if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' function in the file 'https://github.com/rafael-tonello/shellscript_utils/blob/main/libs/new.sh'"; exit 1; fi
 
 _this->logToTerminal=1
@@ -9,9 +20,9 @@ _this->scriptDirectory="$3"
 #name, levelNumber, [ascii_scape_color]
 createLogLevel()
 {
-    name=$1
-    levelNumber=$2
-    color=$3
+    local name=$1
+    local levelNumber=$2
+    local color=$3
     eval "$name=$levelNumber"
     eval "${name,,}=$levelNumber"
     eval "${name^^}=$levelNumber"
@@ -42,8 +53,9 @@ createLogLevel "CRITICAL" 60 '\033[0;31m'
 
 
 #[log_levels_def_$INFO], [ident_data_default_1]
-this->init(){ local alowedloglevels=$1; local identData=$2
-    declare -A _this->writers
+this->init(){ local alowedloglevels=$1; local identData=$2;
+    #declare -A _this->writers
+
     _this->alowedloglevels=$alowedloglevels
     _this->identData=$identData
 
@@ -59,34 +71,19 @@ this->init(){ local alowedloglevels=$1; local identData=$2
         _this->identData=1
     fi
 
-    return 0
-}
-
-this->init(){
-    _this->alowedloglevels=$1
-    _this->logToTerminal=$2
-    _this->logfile=$3
-    _this->identData=$4
-
-    #echo "initializing logger with args alowedloglevels=$_this->alowedloglevels, logToTerminal=$_this->logToTerminal, logfile=$_this->logfile, identData=$_this->identData"
-
-    if [ "$_this->logToTerminal" == "" ]; then
-        _this->logToTerminal=1
-    fi
-
-    if [ "$_this->alowedloglevels" == "" ]; then
-        _this->alowedloglevels=$INFO
-    fi
-
-    if [ "$_this->identData" == "" ]; then
-        _this->identData=1
-    fi
+    shift; shift;
+    for writer in "$@"; do
+        this->addWriter "$writer"
+    done
 
     return 0
 }
 
+#add a wirter driver to the logger.
+#
 this->addWriter(){ local writer=$1
-    _this->writers+=("$writer")
+    local currentSize=${#_this->writers[@]}
+    _this->writers[$currentSize]="$writer"
     return 0
 }
 
@@ -241,6 +238,7 @@ _this->level_to_string(){
 }
 
 #logName, object_name
+
 this->newNLog(){
     log_name=$1
     object_name=$2

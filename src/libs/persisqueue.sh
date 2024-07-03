@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # This script defines a queue of any thing (strings)
+#a simple FIFO queue that uses shared memory to store the elements. The use of shared memory allows the queue to be used by different 
+#threads (terminal spawns) and data persistence between app executions.
+
 this->scriptLocation=$3
-this->init(){ local queuename=$1; local _memoryNamespace_=$2; local _memoryStorageDirectory_=$2;
+
+this->init(){ local queuename="$1"; local _memoryNamespace_="$2"; local _memoryStorageDirectory_="$3";
     if [ -z "$queuename" ]; then
         echo "Error: queue name is required"
         return 1
@@ -12,9 +16,10 @@ this->init(){ local queuename=$1; local _memoryNamespace_=$2; local _memoryStora
 
     if [ "$_memoryNamespace_" != "" ]; then
         _memoryNamespace_="$queuename"
-        return 1
     fi
+
     new_f "$this->scriptLocation/""sharedmemory.sh" "this->memory" "" 1 "$_memoryNamespace_" "$_memoryStorageDirectory_"
+
     this->memory->setVar "$this->_queueName".lastIndex 0
     this->memory->setVar "$this->_queueName".firstIndex 0
 }
