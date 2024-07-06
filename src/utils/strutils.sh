@@ -80,18 +80,20 @@ this->split(){ local source=$1; local separator=$2
     #declare the array
     _r=()
 
+    local index=0
     while [ true ]; do
         #find the separator
         local index=$(expr index "$source" "$separator")
 
         #if not found, add the source to the array and break the loop
         if [ "$index" == "0" ]; then
-            _r+=("$source")
+            _r[index]="$source"
             break
         fi
 
         #add the part of the source to the array
-        _r+=("${source:0:index-1}")
+        _r[index]+=("${source:0:index-1}")
+        index=$((index+1))
 
         #remove the part of the source
         source="${source:index}"

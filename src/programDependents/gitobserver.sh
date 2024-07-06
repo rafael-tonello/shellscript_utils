@@ -9,43 +9,46 @@ this->init(){ local projectName="$1"; local repoUrl="$2"; local _gitRepoPath_="$
     this->repoUrl="$repoUrl"
     this->gitRepoPath="$_gitRepoPath_"
 
+    new "eventstream.sh" "this->onCommit" "" 1
+    new "eventstream.sh" "this->onTag" "" 1
 
     new "strutils.sh" strutils
     if [ -z "$this->gitRepoPath" ]; then
-
         this->gitRepoPath="$(pwd)/.gitobserver_data/repo_workdir_"$(strutils->getOnly "$this->projectName" $strutils->alphaNumericChars)
     fi
 
+    #shared memory (used as a key-value db){
+        if [ -z "$_shm_namespace_" ]; then
+            _shm_namespace_="gitobserver_$(strutils->getOnly \"$this->repoUrl\" $strutils->alphaNumericChars)"
+        fi
 
-    if [ -z "$_shm_namespace_" ]; then
-        _shm_namespace_="gitobserver_$(strutils->getOnly \"$this->repoUrl\" $strutils->alphaNumericChars)"
-    fi
+        if [ -z "$_shm_directory" ]; then
+            _shm_directory="$(pwd)/.gitobserver_data"
+        fi
+        new "sharedmemory" "this->db" "" 1 "$_shm_namespace_" "$_shm_directory"
+    #}
 
-    if [ -z "$_shm_directory" ]; then
-        _shm_directory="$(pwd)/.gitobserver_data"
-    fi
-
-
-    new "sharedmemory" "this->db" "" 1 "$_shm_namespace_" "$_shm_directory"
-
-    new "eventstream.sh" "this->onCommit" "" 1
-    new "eventstream.sh" "this->onTag" "" 1
+    #schedule the periodical checking of the repository{
+        #check if 'PROGRAM' is defined
+        if [ ! -z "$PROGRAM" ]; then
+            #add a periodic task to the scheduler
+            echo "Adding periodic task to the scheduler to check for new commits in the repository '$this->repoUrl' every 5 seconds"
+            scheduler->runPeriodically "this->work" 5
+        else
+            echo "The scheduler (from program.sh) is not loaded. You must call the 'work' or 'workLoop' function by yourself to make the GitObserver work"
+        fi
+    #}
 }
-
 
 #this function make all the class work
 this->work(){
     #clone the repositore if the folder does not exist
-
-    if [ ! -d "$this->gitRepoPath" ]; then
+    if [ ! -d "$this->gitRepoPath/.git" ]; then
         printf "Clonign repository \n    '$this->repoUrl' in \n    $this->gitRepoPath\n"
         git clone "$this->repoUrl" "$this->gitRepoPath" > /dev/null
     fi
-
-    #go to the git repository folder
     cd "$this->gitRepoPath"
 
-    #the the latest commits from the repository
     git fetch --all > /dev/null
 
     _this->checkCommitsAndTags
@@ -69,6 +72,8 @@ _this->checkCommitsAndTags(){
 
     #list all the commits before the 'lastCommit'
     if [ -z "$lastCommit" ]; then
+        echo "The repository was just cloned. Only the last commit will be sent to the observers" #the commit is sent to observer after the 'for' over the commits
+
         local commits=$(git log --all --pretty=format:"%H" --reverse)
     else
         local commits=$(git log --all --pretty=format:"%H" --reverse $lastCommit..HEAD)
@@ -86,13 +91,22 @@ _this->checkCommitsAndTags(){
         #get the commit tag
         local commitTag=$(git tag --points-at $commit)
         
-        #if the commit has a tag, emit the this->onTag event
-        if [ ! -z "$commitTag" ]; then
-            this->onTag->emit "$commitTag" "$commit" "$commitMessage" "$commitAuthor" "$commitDate"
+        #do not call onCommit if the commit is empty. It signs that the repository was just cloned and it my have a lot of commits
+        if [ "$lastCommit" != "" ]; then
+            #if the commit has a tag, emit the this->onTag event
+            if [ ! -z "$commitTag" ]; then
+                this->onTag->emit "$commitTag" "$commit" "$commitMessage" "$commitAuthor" "$commitDate"
+            fi
+            #emit the this->onCommit event
+            this->onCommit->emit "$commit" "$commitMessage" "$commitAuthor" "$commitDate"
         fi
-        #emit the this->onCommit event
-        this->onCommit->emit "$commit" "$commitMessage" "$commitAuthor" "$commitDate"
     done
+
+    #in case of the repsotiory was just cloned, just the lastCommit is sent to the observers
+    if [ -z "$lastCommit" ]; then
+        this->onCommit->emit "$commit" "$commitMessage" "$commitAuthor" "$commitDate"
+    fi
+
     #update the last commit found in the database
     this->db->setVar lastCommit $commit
 }

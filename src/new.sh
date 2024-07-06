@@ -83,8 +83,11 @@ new_f()
     fi
     
     #create a variable with the name of the object. The value is the filename of the object
-    eval "$name=\$scriptDir\$fileName"
-    eval "$name""_name=\"$name\""
+    eval "$name=\"\$scriptDir\$fileName\""
+    eval "$name""_name=\"\$name\""
+    eval "$name""_fileName=\"\$fileName\""
+    eval "$name""_file=\"\$scriptDir\$fileName\""
+
 
     #(__new_f_tmp(){
     #    sleep 0.25
@@ -254,3 +257,17 @@ import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
     return 0
 }
 
+displaysObjecMemory(){
+    objectName="$1"
+    #get all variables started with '$objectName
+    local objVars=$(compgen -A variable | grep "^$objectName")
+
+
+    for i in $objVars; do
+        eval "echo \"$i: \$$i\""
+    done
+}
+
+showObjectMemory(){
+    displaysObjecMemory "$@"
+}
