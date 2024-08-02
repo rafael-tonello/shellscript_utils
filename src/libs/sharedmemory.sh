@@ -8,7 +8,7 @@
 #
 #this file is a class, and must be instantiated through the new.sh lib.
 
-#if [ "$1" != "new" ]; then echo "sourcing"; source <(curl -s "https://raw.githubusercontent.com/rafael-tonello/shellscript_utils/main/libs/new.sh"); new_f "$0" __app__ "" 1; exit 0; fi
+#if [ "$1" != "new" ]; then echo "sourcing"; source <(curl -s "https://raw.githubusercontent.com/rafael-tonello/shellscript_utils/main/libs/new.sh"); new_f "$0" __app__; exit 0; fi
 
 #initializes thes shared memory. The first parameter is the namespace. The second parameter (optional) is the 
 #directory where the shared memory will be stored. If the _storageDirectory_ is not provided, the shared memory will be stored in /dev/shm

@@ -19,20 +19,41 @@
 #the scan code is at end of the file
 project_dir=$1
 
+ctx=""
+context=""
+autoinit=""
 #new object from a class in a [fileName].sh file
-#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments ...]
+#arguments:
+#   normal args:
+#       fileName: the filename with the class implmentation
+#       ObjectName: the name of the new object
+#       [init arguments ...]: arguments to be passed to the init function of the object
+#   named args (global variables):
+#       ctx: the context/reference of the object (this, self, etc). The default value is 'this'
+#       autoinit: if 1, call the init function of the object after create it. The default vlue is 1
 new_f()
 {
 	local currDir=$(pwd)
     local fileName="$1"
     local name="$2"
-    local auto_call_init=$4
     local thiskey="this"
 
-
-    if [ "$3" != "" ]; then
-        thiskey=$3
+    if [ "$ctx" != "" ]; then
+        thiskey="$ctx"
+    elif [ "$context" != "" ]; then
+        thiskey="$context"
     fi;
+
+    local auto_call_init=$autoinit
+    if [ "$auto_call_init" == "" ]; then
+        auto_call_init="1"
+    fi
+
+    #prepare named args (global variables) for the next calls {
+        ctx=""
+        context=""
+        autoinit=""
+    #}
 
     if [ "$fileName" == "http"* ]; then
         #check if curl is present
@@ -96,6 +117,9 @@ new_f()
     #}; __new_f_tmp &)
 
     source "$fileName.c.sh" new "$name" "$scriptDir"
+    if [ "$?" != "0" ]; then
+        dump_stack
+    fi
 
     #check if 'DEBUG' is set to 1
     if [ "$DEBUG" != "1" ]; then
@@ -106,8 +130,7 @@ new_f()
     if [ "$auto_call_init" == "1" ]; then
         shift
         shift
-        shift
-        shift
+        echo "evaluating $name""_init \"\$@\""
         eval "$name""_init \"\$@\""
         return $?
     fi
@@ -116,7 +139,15 @@ new_f()
 }
 
 #new object from a class in a [fileName].sh file
-#fileName, ObjectName, [this_self_string], [auto_call_init], [auto_call_init_arguments]
+#new object from a class in a [fileName].sh file
+#arguments:
+#   normal args:
+#       className: the name of the class (filename without extension). It can contains part of the path. Path are used as namespace
+#       ObjectName: the name of the new object
+#       [init arguments ...]: arguments to be passed to the init function of the object
+#   named args (global variables):
+#       ctx: the context/reference of the object (this, self, etc). The default value is 'this'
+#       autoinit: if 1, call the init function of the object after create it. The default vlue is 1
 newsh_scanned=0
 declare -Ag newsh_classes
 new () { local className=$1;
@@ -167,9 +198,7 @@ inherit_f(){ local parentClassFile=$1; local childObjectName=$2; lcoal _this_key
 
 inherit(){ local parentClassName=$1; local childObjectName=$2; local _this_key_=$3
 
-    echo new "$parentClassName" "$childObjectName" "$_this_key_" 0
-    new "$parentClassName" "$childObjectName" "$_this_key_" 0
-
+    autoinit=0; new "$parentClassName" "$childObjectName" "$_this_key_"
 
     local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
 
@@ -318,4 +347,12 @@ displaysObjecMemory(){
 
 showObjectMemory(){
     displaysObjecMemory "$@"
+}
+
+dump_stack(){ #found here: https://stackoverflow.com/questions/685435/trace-of-executed-programs-called-by-a-bash-script
+    local i=0
+    local line_no
+    local function_name
+    local file_name
+    while caller $i ;do ((i++)) ;done | while read line_no function_name file_name;do echo -e "\t$file_name:$line_no\t$function_name" ;done >&2
 }

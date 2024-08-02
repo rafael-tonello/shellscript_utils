@@ -18,7 +18,7 @@ this->init(){ local queuename="$1"; local _memoryNamespace_="$2"; local _memoryS
         _memoryNamespace_="$queuename"
     fi
 
-    new_f "$this->scriptLocation/""sharedmemory.sh" "this->memory" "" 1 "$_memoryNamespace_" "$_memoryStorageDirectory_"
+    new_f "$this->scriptLocation/""sharedmemory.sh" "this->memory" "$_memoryNamespace_" "$_memoryStorageDirectory_"
 
     this->memory->setVar "$this->_queueName".lastIndex 0
     this->memory->setVar "$this->_queueName".firstIndex 0

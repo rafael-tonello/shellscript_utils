@@ -5,7 +5,7 @@ if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' f
 
 dirname=$3
 echo "$dirname"
-new "utils/strutils.sh" this->strUtils
+autoinit=0; new "utils/strutils.sh" this->strUtils
 
 this->init() { 
     this->host=$1

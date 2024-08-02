@@ -19,9 +19,9 @@ program_init(){ local shellscriptUtilsPath=$1; local autoScanCurrentFolder=$2;
 
 
     #scheduler
-        new "list" "scheduler_oneShotTasks" "" 1
-        new "list" "scheduler_periodicTasks" "" 1
-        new "list" "scheduler_delayedTasks" "" 1
+        new "list" "scheduler_oneShotTasks"
+        new "list" "scheduler_periodicTasks"
+        new "list" "scheduler_delayedTasks"
 
         scheduler_run(){ local callback=$1
             scheduler_oneShotTasks_pushBack "$callback"

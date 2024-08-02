@@ -25,10 +25,10 @@ this->init(){
     #CREATE A CUSTOM LOG LEVEL FOR COMMAND INTERCEPTION
     createLogLevel "COMMAND_TRACE" 25 '\033[0;34m'
 
-    new "eventstream.sh" "this->onCommit" "" 1
-    new "eventstream.sh" "this->onTag" "" 1
+    new "eventstream.sh" "this->onCommit"
+    new "eventstream.sh" "this->onTag"
 
-    new "strutils.sh" strutils
+    autoinit=0; new "strutils.sh" strutils
     if [ -z "$this->gitRepoPath" ]; then
         this->gitRepoPath="$(pwd)/.gitobserver_data/repo_workdir_"$(strutils->getOnly "$this->projectName" $strutils->alphaNumericChars)
     fi
@@ -41,7 +41,7 @@ this->init(){
         if [ -z "$_shm_directory" ]; then
             _shm_directory="$(pwd)/.gitobserver_data"
         fi
-        new "sharedmemory" "this->db" "" 1 "$_shm_namespace_" "$_shm_directory"
+        new "sharedmemory" "this->db" "$_shm_namespace_" "$_shm_directory"
     #}
 
     #schedule the periodical checking of the repository{

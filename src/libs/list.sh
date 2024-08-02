@@ -10,7 +10,7 @@
 ##    echo "sourcing new.sh"
 ##    source "/media/veracrypt/projects/rafinha_tonello/shellscript_utils/src/new.sh"
 ##    echo "starting app"
-##    new_f "$0" test "" 1
+##    new_f "$0" test
 ##    exit 0; 
 ##fi
 

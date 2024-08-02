@@ -3,7 +3,7 @@
 #eventbus class
 
 this->init(){ local namespace=$1;
-    new "sharedmemory" this->_memory "" 1 "$namespace"
+    new "sharedmemory" this->_memory "$namespace"
     this->_memory->setVar "listeners.count" 0
 
 }

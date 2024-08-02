@@ -3,7 +3,7 @@
 #A class with simple function to send messages and files to Telegram
 #
 #   example:
-#       new "telegramsend" "telegram" "" 1 "$ENV_BOTKEY" "$ENV_CHATID"
+#       new "telegramsend" "telegram" "$ENV_BOTKEY" "$ENV_CHATID"
 #       telegram->sendTextMessage "Hello World"
 #       telegram->sendFile "/path/to/file
 #
