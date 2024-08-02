@@ -14,7 +14,7 @@ this->finalize(){
 }
 
 this->testEmit(){
-    new "eventbus" eb "" 1 "eventbus"
+    new "eventbus" eb "eventbus"
 
     eb->on "event" "func(){
         this->callback_data=\"\$1\"
@@ -41,7 +41,7 @@ this->testEmit(){
 }
 
 this->testEmit_2(){
-    new "eventbus" eb "" 1 "eventbus"
+    new "eventbus" eb "eventbus"
     eb->on "event" "func(){
         this->callback_data=\"\$1\"
     }; func"
@@ -70,7 +70,7 @@ this->testEmit_2(){
 }
 
 this->testEmit_3(){
-    new "eventbus" eb "" 1 "eventbus"
+    new "eventbus" eb "eventbus"
     eb->on "event" "func(){
         this->callback_data=\"\$1\"
         this->callback_data_2=\"\$2\"

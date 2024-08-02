@@ -4,11 +4,11 @@
 
 this->scriptLocation=$3
 this->init(){ testsObject=$1;
-    new_f $this->scriptLocation"/../../src/threads.sh" this->threads "" 1 $("$testsObject"->getNamespace)
-    new_f $this->scriptLocation"/../../src/sharedmemory.sh" this->memory "" 1 $("$testsObject"->getNamespace)
+    new_f $this->scriptLocation"/../../src/libs/threads.sh" this->threads $("$testsObject"->getNamespace)
+    new_f $this->scriptLocation"/../../src/libs/sharedmemory.sh" this->memory $("$testsObject"->getNamespace)
     #you can use the object passe by parameters or instantiate a new instance (in this case, 
     #the namespace should be the same as the one used in the tests.sh file)
-    #new_f $this->scriptLocation"/../../../tests.sh" this->tests "" 1 "tests"
+    #new_f $this->scriptLocation"/../../../tests.sh" this->tests "tests"
     
     "$testsObject"->registerTest "threads: Testing run thread1" "this->testRunThread"
     "$testsObject"->registerTest "threads: Testing setVar and getVar (multi thread)" "this->testSetAndGet"

@@ -1,0 +1,61 @@
+if [ "$1" != "new" ]; then
+    source ../src/new.sh "../src"
+    scan_folder_for_classes ".."
+    new_f "$0" __app__
+    exit $?
+fi
+
+this_init(){
+    new "tests" this_tests "tests_namespace"
+    autoinit=0; new "utils" this_utils
+    
+    echo "initializing tests"
+    new_f "./src.tests/sharedmemory.test.sh" this_memoryTests "this_tests"
+    new_f "./src.tests/thread.test.sh" this_threadTests "this_tests"
+    new_f "./src.tests/utils.tests/strutils.test.sh" this_utilsTests "this_tests"
+    new_f "./src.tests/libs.tests/translate.test.sh" this_translateTests "this_tests"
+    new_f "./src.tests/libs.tests/eventbus.test.sh" this_eventbusTests "this_tests"
+    new_f "./src.tests/queue.test.sh" this_queueTests "this_tests"
+
+
+    this_utils_printHorizontalLine " [ running tests ] " "=" 2>/dev/null
+    this_tests_runTests
+    errorCount=$?
+
+    echo ""
+    this_utils_printHorizontalLine " [ tests results ] " "=" 2>/dev/null
+    #this_tests_showTestResults
+    this_tests_showSumarizedTestResults
+
+    this_memoryTests_finalize
+    this_threadTests_finalize
+    this_utilsTests_finalize
+    this_translateTests_finalize
+    this_eventbusTests_finalize
+    this_queueTests_finalize
+    this_tests_finalize
+    return $errorCount
+}
+ 
+
+
+
+interceptCommandStdout(){ local command=$1; local lambda=$2
+    local output=$(eval $command)
+    local error=$?
+    if [ $error -ne 0 ]; then
+        echo "Error running command: $command"
+        return 1
+    fi
+
+    echo "$output" | while read line; do
+        $lambda "$line"
+    done
+}
+
+#run 'command' and intercept its stdout in real time
+interceptCommandStdout(){ local command=$1; local lambda=$2
+    eval "$command" | while read line; do
+        eval "$lambda \"\$line\""
+    done
+}

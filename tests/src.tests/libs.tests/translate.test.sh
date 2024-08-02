@@ -19,7 +19,7 @@ this->testTranslateEnPt(){
     mkdir -p "languages"
     echo "this is the original text=este é o texto original" > "languages/pt_BR"
 
-    new "translate" tr "" 1 "languages/pt_BR"
+    new "translate" tr "languages/pt_BR"
     local result=$(tr->t "this is the original text")
     rm -rf languages
     if [ "$result" != "este é o texto original" ]; then
@@ -35,7 +35,7 @@ this->testTranslateEnPt_2(){
     mkdir -p "languages"
     echo "this is the original text=este é o texto original" > "languages/pt_BR"
 
-    new "translate" tr "" 1 "languages/pt_BR"
+    new "translate" tr "languages/pt_BR"
     local result=$(tr->t "this text should not be translated")
     rm -rf languages
     if [ "$result" != "this text should not be translated" ]; then
@@ -51,7 +51,7 @@ this->testReplace(){
     mkdir -p "languages"
     echo "this is the %% text=este é o texto %%" > "languages/pt_BR"
 
-    new "translate" tr "" 1 "languages/pt_BR"
+    new "translate" tr "languages/pt_BR"
 
     local result=$(tr->t "this is the %% text" "original")
     rm -rf languages
@@ -69,7 +69,7 @@ this->testReplace_2(){
     mkdir -p "languages"
     echo "this is the %% text=este é o texto %%" > "languages/pt_BR"
 
-    new "translate" tr "" 1 "languages/pt_BR"
+    new "translate" tr "languages/pt_BR"
 
     local result=$(tr->t "this text should not be %%." "translated")
     rm -rf languages
@@ -87,7 +87,7 @@ this->testNotFoundsFile(){
     mkdir -p "languages"
     echo "this is the %% text=este é o texto %%" > "languages/pt_BR"
 
-    new "translate" tr "" 1 "languages/pt_BR"
+    new "translate" tr "languages/pt_BR"
 
     local result=$(tr->t "this text should not be translated")
 

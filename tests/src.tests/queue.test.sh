@@ -20,7 +20,7 @@ this->finalize(){
 }
 
 this->testPushFront(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushFront "data"
     local data=$(q->popFront)
     if [ "$data" != "data" ]; then
@@ -33,7 +33,7 @@ this->testPushFront(){
 }
 
 this->testPushBack(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushBack "data"
     local data=$(q->popBack)
     if [ "$data" != "data" ]; then
@@ -46,7 +46,7 @@ this->testPushBack(){
 }
 
 this->testPopFront(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushFront "data"
     local data=$(q->popFront)
     if [ "$data" != "data" ]; then
@@ -59,7 +59,7 @@ this->testPopFront(){
 }
 
 this->testPopBack(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushBack "data"
     local data=$(q->popBack)
     if [ "$data" != "data" ]; then
@@ -72,7 +72,7 @@ this->testPopBack(){
 }
 
 this->testPopFront_2(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushFront "data"
     local data=$(q->popFront)
     if [ "$data" != "data" ]; then
@@ -92,7 +92,7 @@ this->testPopFront_2(){
 }
 
 this->testPopBack_2(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushBack "data"
     local data=$(q->popBack)
     if [ "$data" != "data" ]; then
@@ -112,7 +112,7 @@ this->testPopBack_2(){
 }
 
 this->testPushFront_2(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushFront "data"
     q->pushFront "data2"
     q->pushFront "data3"
@@ -141,7 +141,7 @@ this->testPushFront_2(){
 }
 
 this->testPushBack_2(){
-    new "queue" q "" 1 "queue"
+    new "queue" q "queue"
     q->pushBack "data"
     q->pushBack "data2"
     q->pushBack "data3"

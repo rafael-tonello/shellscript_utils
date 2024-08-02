@@ -1,0 +1,45 @@
+if [ "$1" != "new" ]; then
+    source ../src/new.sh "../src"
+    scan_folder_for_classes ".."
+    new_f "$0" __app__ "" 1
+    exit $?
+fi
+
+__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_init(){
+    new "tests" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests "tests_namespace"
+    autoinit=0; new "utils" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_utils
+    
+    echo "initializing tests"
+    new_f "./src.tests/sharedmemory.test.sh" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_memoryTests "" 1 "__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests"
+    new_f "./src.tests/thread.test.sh" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_threadTests "" 1 "__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests"
+    new_f "./src.tests/utils.tests/strutils.test.sh" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_utilsTests "" 1 "__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests"
+    new_f "./src.tests/libs.tests/translate.test.sh" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_translateTests "" 1 "__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests"
+    new_f "./src.tests/libs.tests/eventbus.test.sh" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_eventbusTests "" 1 "__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests"
+    new_f "./src.tests/queue.test.sh" __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_queueTests "" 1 "__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests"
+
+
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_utils_printHorizontalLine " [ running tests ] " "=" 2>/dev/null
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_runTests
+    errorCount=$?
+
+    echo ""
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_utils_printHorizontalLine " [ tests results ] " "=" 2>/dev/null
+    #__app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_showTestResults
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_showSumarizedTestResults
+
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_memoryTests_finalize
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_threadTests_finalize
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_utilsTests_finalize
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_translateTests_finalize
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_eventbusTests_finalize
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_queueTests_finalize
+    __app___tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_tests_finalize
+    return $errorCount
+}
+ 
+
+
+
+interceptCommandStdout(){ local command=$1; local lambda=$2
+    local output=$(eval $command)
+ 
