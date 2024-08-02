@@ -130,7 +130,6 @@ new_f()
     if [ "$auto_call_init" == "1" ]; then
         shift
         shift
-        echo "evaluating $name""_init \"\$@\""
         eval "$name""_init \"\$@\""
         return $?
     fi

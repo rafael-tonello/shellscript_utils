@@ -1,20 +1,13 @@
 if [ "$1" != "new" ]; then
-    echo "loading new.sh"
     source ../src/new.sh "../src"
     scan_folder_for_classes ".."
-    echo "new.sh loaded. Starting tests app"
     new_f "$0" __app__
-    ret=$?
-    echo "tests app finished"
-    exit $ret
+    exit $?
 fi
 
 this->init(){
-    echo 1
     new "libs/tests" this->tests "tests_namespace"
-    echo 2
     this->tests->cleanAndPrepare
-    echo 3
 
     autoinit=0; new "utils" this->utils
     
