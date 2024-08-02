@@ -24,7 +24,6 @@ this->init(){
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
     this->tests->runTests
     errorCount=$?
-    echo 5
 
     echo ""
     this->utils->printHorizontalLine " [ tests results ] " "=" 2>/dev/null
@@ -38,7 +37,6 @@ this->init(){
     this->eventbusTests->finalize
     this->queueTests->finalize
     this->tests->finalize
-    echo 5
     return $errorCount
 }
  
