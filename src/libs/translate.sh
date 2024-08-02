@@ -13,7 +13,7 @@ this->init(){ local destLangFile=$1
         destLangFile="languages/$(locale | grep LANG | cut -d= -f2 | cut -d. -f1)"
     fi
 
-    new_f "$this->scriptLocation""/../utils/strutils.sh" _this->strUtils
+    autoinit=0; new_f "$this->scriptLocation""/../utils/strutils.sh" _this->strUtils
     this->cutChar="="
     
     _this->destLangFile="$destLangFile"

@@ -309,10 +309,17 @@ _this->drawLabel(){
     this->setCursorXY $lblX $lblY
 
     #echo runnint printf "$lblPrefix$lblText$lblSufix"
+
     if [ "$lblPasswordText" != "" ]; then
         printf "$lblPrefix$lblPasswordText$lblSufix"
     else
-        printf "$lblPrefix$lblText$lblSufix"
+        printf "$lblPrefix"
+        printf "$lblText" 2>/dev/shm/printferrooutput
+        local printferr="$(cat /dev/shm/printferrooutput)"
+        if [ "$printferr" != "" ]; then
+            echo "printf error, redirecting to echo:  $lblText"
+        fi
+        printf $lblSufix
     fi
 }
 

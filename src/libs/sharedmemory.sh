@@ -8,14 +8,22 @@
 #
 #this file is a class, and must be instantiated through the new.sh lib.
 
-#if [ "$1" != "new" ]; then echo "sourcing"; source <(curl -s "https://raw.githubusercontent.com/rafael-tonello/shellscript_utils/main/libs/new.sh"); new_f "$0" __app__ "" 1; exit 0; fi
+#if [ "$1" != "new" ]; then echo "sourcing"; source <(curl -s "https://raw.githubusercontent.com/rafael-tonello/shellscript_utils/main/libs/new.sh"); new_f "$0" __app__; exit 0; fi
 
-this->init(){ local namespace=$1;
+#initializes thes shared memory. The first parameter is the namespace. The second parameter (optional) is the 
+#directory where the shared memory will be stored. If the _storageDirectory_ is not provided, the shared memory will be stored in /dev/shm
+this->init(){ local namespace=$1; local _storageDirectory_=$2
+    if [ "$_storageDirectory_" == "" ]; then
+        _storageDirectory_="/dev/shm"
+    fi
+
+    this->_storageDirectory=$_storageDirectory_
+
     _this->initSharedMemory $namespace
 }
 
-this->finalize(){ local clearNamespace=$1
-    if [ "$clearNamespace" == "1" ]; then
+this->finalize(){ local _clearNamespace_=$1
+    if [ "$_clearNamespace_" == "1" ]; then
         _this->clearNamespace
     fi
 }
@@ -26,7 +34,7 @@ _this->clearNamespace(){
 
 #this function creates a virtual directory in the RAM to store key-values
 _this->initSharedMemory(){ local namespace=$1;
-    this->sharedMemoryDir="/dev/shm/sharedMemory_"$namespace
+    this->sharedMemoryDir="$this->_storageDirectory""/sharedMemory_"$namespace
     mkdir -p "$this->sharedMemoryDir"
 }
 

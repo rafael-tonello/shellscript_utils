@@ -8,7 +8,7 @@
 
 #Examples
 #   Basic example
-#       new_f "tests.sh" __tests__ "" 1 "myTests"
+#       new_f "tests.sh" __tests__ "myTests"
 #       __tests__->registerTest "test1" "echo 1"
 #       __tests__->registerTest "test2" "echo 2"
 #       __tests__->runTests
@@ -16,7 +16,7 @@
 
 #   Calling directly the function setTestResult to set a test results. In this case, you do not need to
 #   register the test before (but you need to run the test by yourself).
-#       new_f "tests.sh" __tests__ "" 1 "myTests"
+#       new_f "tests.sh" __tests__ "myTests"
 #       __tests__->setTestResult "test1" 0 "test1 passed"
 #       __tests__->setTestResult "test2" 1 "test2 failed"
 #       __tests__->showTestResults
@@ -24,8 +24,9 @@
 this->scriptLocation=$3
 this->init(){ local namespace=$1;
     this->_namespace=$namespace
-    new_f "$this->scriptLocation/sharedmemory.sh" this->vars "" 1 "$namespace"
-    new_f "$this->scriptLocation/utils/utils.sh" this->utils
+
+    new_f "$this->scriptLocation/sharedmemory.sh" this->vars "$namespace"
+    autoinit=0; new_f "$this->scriptLocation/../utils/utils.sh" this->utils
     
     local initialCount=$(this->vars->getVar "__tests.count")
 
@@ -184,7 +185,7 @@ this->showSumarizedTestResults(){
         local resultCode=$(this->vars->getVar "__tests.$i.resultCode")
         local message=$(this->vars->getVar "__tests.$i.message")
 
-        if [ "$resultCode" -ne "0" ]; then
+        if [ "$resultCode" != "" ] && [ "$resultCode" -ne "0" ]; then
             errorCount=$((errorCount+1))
         fi
     done

@@ -7,18 +7,16 @@
 # _r is a global variable used to return values
 #
 
-#if [ "$1" != "new" ]; then echo "sourcing"; source <(curl -s "https://raw.githubusercontent.com/rafael-tonello/shellscript_utils/main/libs/new.sh"); new_f "$0" __app__ "" 1; exit 0; fi
+#if [ "$1" != "new" ]; then echo "sourcing"; source <(curl -s "https://raw.githubusercontent.com/rafael-tonello/shellscript_utils/main/libs/new.sh"); new_f "$0" __app__; exit 0; fi
 
 this->scriptLocation=$3
 
 this->init(){ local namespace=$1;
-    new_f $this->scriptLocation/"sharedmemory.sh" this->memory "" 1 "$namespace"
+    new_f $this->scriptLocation/"sharedmemory.sh" this->memory "$namespace"
 }
 
-this->finalize(){ local clearNamespace=$1
-    if [ "$clearNamespace" == "1" ]; then
-        this->memory->finalize 1
-    fi
+this->finalize(){ local _clearNamespace_=$1
+    this->memory->finalize $_clearNamespace_
 }
 
 this->runThread(){ local threadFunction=$1;
