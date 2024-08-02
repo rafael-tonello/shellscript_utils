@@ -4,16 +4,16 @@
 
 this->scriptLocation=$3
 this->init(){ testsObject=$1;
-    new_f $this->scriptLocation"/../../src/sharedmemory.sh" this->memory "" 1 $("$testsObject"->getNamespace)
+    new_f $this->scriptLocation"/../../src/libs/sharedmemory.sh" this->memory $("$testsObject"->getNamespace)
     #you can use the object passe by parameters or instantiate a new instance (in this case, 
     #the namespace should be the same as the one used in the tests.sh file)
-    #new_f $this->scriptLocation"/../../../tests.sh" this->tests "" 1 "tests"
+    #new_f $this->scriptLocation"/../../../tests.sh" this->tests "tests"
     
-    "$testsObject"->registerTest "Testing setVar" "this->testSetVar"
-    "$testsObject"->registerTest "Testing getVar" "this->testGetVar"
-    "$testsObject"->registerTest "Testing lock/unlock vars" "this->testLockUnLock"
-    "$testsObject"->registerTest "waitForValue" "this->testWaitForValue 0.5"
-    "$testsObject"->registerTest "Testing waitForValue should fail if wait timeout is reached" "_anfn(){
+    "$testsObject"->registerTest "sharedmemory: Testing setVar" "this->testSetVar"
+    "$testsObject"->registerTest "sharedmemory: Testing getVar" "this->testGetVar"
+    "$testsObject"->registerTest "sharedmemory: Testing lock/unlock vars" "this->testLockUnLock"
+    "$testsObject"->registerTest "sharedmemory: waitForValue" "this->testWaitForValue 0.5"
+    "$testsObject"->registerTest "sharedmemory: Testing waitForValue should fail if wait timeout is reached" "_anfn(){
         this->testWaitForValue 1.2
         local retCode=\$?
         #check if errorCode == 0
@@ -39,7 +39,7 @@ this->finalize(){
 }
 
 this->testSetVar(){
-    new "sharedmemory" memory "" 1 "tests_testGetVar"
+    new "sharedmemory" memory "tests_testGetVar"
     memory->setVar "testvar" "testValue"
 
     #check if file [memory->sharedMemoryDir]/[testvar] exists and has the value "testValue"
@@ -54,7 +54,7 @@ this->testSetVar(){
 }
 
 this->testGetVar(){
-    new "sharedmemory" memory "" 1 "tests_testGetVar"
+    new "sharedmemory" memory "tests_testGetVar"
     #create a file [memory->sharedMemoryDir]/[testgetvar] with the value "rightValue"
     echo "rightValue" > "$memory->sharedMemoryDir/testgetvar"
 
@@ -70,7 +70,7 @@ this->testGetVar(){
 }
 
 this->testLockUnLock(){
-    new "sharedmemory" memory "" 1 "tests_testLockUnLock"
+    new "sharedmemory" memory "tests_testLockUnLock"
     memory->lockVar "testvar"
     #check if the file [memory->sharedMemoryDir]/[testvar] exists
     if [ ! -f "$memory->sharedMemoryDir/testvar.lock" ]; then
@@ -97,7 +97,7 @@ this->testLockUnLock(){
 #The time should be checked to be less than 5 seconds and bigger than 0 seconds
 #the total time is stored in the _r variable by the memory->waitForValue function
 this->testWaitForValue(){ local sleepTime=$1;
-    new "sharedmemory" memory "" 1 "tests_testWaitForValue"
+    new "sharedmemory" memory "tests_testWaitForValue"
     echo "wrongValue" > "$memory->sharedMemoryDir/testwaitforvalue"
 
     (
