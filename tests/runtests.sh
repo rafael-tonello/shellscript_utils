@@ -1,6 +1,8 @@
 if [ "$1" != "new" ]; then
+    echo "loading new.sh"
     source ../src/new.sh "../src"
     scan_folder_for_classes ".."
+    echo "new.sh loaded. Starting tests app"
     new_f "$0" __app__
     exit $?
 fi
