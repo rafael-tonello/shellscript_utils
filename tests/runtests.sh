@@ -4,12 +4,17 @@ if [ "$1" != "new" ]; then
     scan_folder_for_classes ".."
     echo "new.sh loaded. Starting tests app"
     new_f "$0" __app__
-    exit $?
+    ret=$?
+    echo "tests app finished"
+    exit $ret
 fi
 
 this->init(){
+    echo 1
     new "libs/tests" this->tests "tests_namespace"
+    echo 2
     this->tests->cleanAndPrepare
+    echo 3
 
     autoinit=0; new "utils" this->utils
     
@@ -20,11 +25,13 @@ this->init(){
     new_f "./src.tests/libs.tests/translate.test.sh" this->translateTests "this->tests"
     new_f "./src.tests/libs.tests/eventbus.test.sh" this->eventbusTests "this->tests"
     new_f "./src.tests/queue.test.sh" this->queueTests "this->tests"
+    echo 4
 
 
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
     this->tests->runTests
     errorCount=$?
+    echo 5
 
     echo ""
     this->utils->printHorizontalLine " [ tests results ] " "=" 2>/dev/null
@@ -38,6 +45,7 @@ this->init(){
     this->eventbusTests->finalize
     this->queueTests->finalize
     this->tests->finalize
+    echo 5
     return $errorCount
 }
  
