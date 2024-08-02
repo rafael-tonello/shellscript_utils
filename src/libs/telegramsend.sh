@@ -12,13 +12,14 @@
 #init the class
 #agrument botkey: the key of the bot
 #argument chatId: the chat id to send the messages
-this->init(){ local botkey="$1"; local chatId="$2"
+this->init(){ local botkey="$1"; local chatId="$2"; local _prefix_="$3";
     this->botkey=$botkey
     this->chatId=$chatId
+    this->prefix=$_prefix_
 }
 
 this->sendTextMessage(){ local message=$1
-    curl -sS -X POST -H "Content-Type: application/json" -d "{\"chat_id\":\"$this->chatId\", \"text\":\"$message\"}" https://api.telegram.org/bot$this->botkey/sendMessage > /dev/null
+    curl -sS -X POST -H "Content-Type: application/json" -d "{\"chat_id\":\"$this->chatId\", \"text\":\"$this->prefix""$message\"}" https://api.telegram.org/bot$this->botkey/sendMessage > /dev/null
 }
 
 this->sendErrorMessage(){ local _error=$1
@@ -42,5 +43,5 @@ this->sendFailureMessage(){ local _error=$1
 }
 
 this->sendFile(){ local file=$1
-    curl -sS -X POST https://api.telegram.org/bot$this->botkey/sendDocument -F chat_id=$this->chatId -F document=@"$file" > /dev/null
+    curl -sS -X POST https://api.telegram.org/bot$this->botkey/sendDocument -F chat_id=$this->chatId -F document=@"$file"
 }

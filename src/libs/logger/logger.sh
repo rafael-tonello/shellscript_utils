@@ -117,7 +117,7 @@ this->log(){
     _this->lastBreakLine=$breakLine
     
     if [ "$_this->identData" == "1" ]; then
-        data=$(_this->identData "$data" $headerSize)
+        data=$(_this->makeDataIdentation $headerSize "$data")
     fi
         
     line=$header$data$breakLine
@@ -216,19 +216,30 @@ _this->lineHeader(){
 }
 
 #data, identationSize
-_this->identData(){
-    data=$1
-    size=$2
+_this->makeDataIdentation(){
+    local mdi_size="$1"
+    local mdi_data="$2"
 
-    ident="\n"
-    for ((i=1; i<=size; i++)); do
-        ident+=" "
-    done
+    if [ "$mdi_size" == "" ]; then
+        mdi_size=0
+    fi
+    
+    #generate a string with 10 characters of '-'
+    #identation=$(printf '%*s' "$mdi_size" | tr ' ' "-")
 
-    result=$(echo "$data" | sed 's/\\n/pppppp/g')
-    result=$(echo "$result" | sed "s/pppppp/$ident/g")
+    local identation=$(printf "%${mdi_size}s")
 
-    echo "$result"
+    #replace all linebreaks by "\n" + identation
+    #mdi_data=$(echo "$mdi_data" | sed -r "s/[^/]*/$identation/g")
+    mdi_data=$(echo "$mdi_data" | sed ':a;N;$!ba;s/\n/oOoOo/g')
+    mdi_data=$(echo "$mdi_data" | sed "s/oOoOo/\n$identation/g")
+    
+    
+    #remove first identation (only from first line)
+    #mdi_data=$(echo "$mdi_data" | sed "s/^$identation//")
+
+
+    echo "$mdi_data"
 }
 
 #level

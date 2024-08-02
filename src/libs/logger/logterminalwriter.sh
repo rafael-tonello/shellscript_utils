@@ -14,7 +14,10 @@ this->log(){ local line=$1; local level=$2; local isError=$3
     if [ "$isError" ==  "1" ]; then
         >&2 printf "$line"
     else
-        printf "$line"
+        printf "$line" 2>/dev/shm/printferrooutput
+        if [ "$printferr" != "" ]; then
+            echo "printf error, redirecting to echo:  $lblText"
+        fi
     fi
     _this->write_color_end
 }

@@ -96,7 +96,12 @@ new_f()
     #}; __new_f_tmp &)
 
     source "$fileName.c.sh" new "$name" "$scriptDir"
-    rm "$fileName.c.sh" 2>/dev/null
+
+    #check if 'DEBUG' is set to 1
+    if [ "$DEBUG" != "1" ]; then
+        rm "$fileName.c.sh" 2>/dev/null
+    fi
+
 
     if [ "$auto_call_init" == "1" ]; then
         shift
@@ -146,6 +151,49 @@ new () { local className=$1;
 
     new_f "$foundFile" "$@"
     return $?
+}
+
+inherit_f(){ local parentClassFile=$1; local childObjectName=$2; lcoal _this_key_=$3
+
+    new_f "$parentClassFile" "$childObjectName" "$_this_key_" 0
+
+    #get the parent class name (filename without extension and directory)
+    local parentClassName=$(basename "$parentClassFile")
+    parentClassName="${parentClassName%.*}"
+
+    _replaceMethodObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+    
+}
+
+inherit(){ local parentClassName=$1; local childObjectName=$2; local _this_key_=$3
+
+    echo new "$parentClassName" "$childObjectName" "$_this_key_" 0
+    new "$parentClassName" "$childObjectName" "$_this_key_" 0
+
+
+    local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
+
+    _replaceMethodObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+
+}
+
+_replaceMethodObjectName(){ local objectName=$1; local newObjectName=$2
+    
+    local parentFuncs=$(compgen -A function | grep "^$objectName""_")
+
+    #copy all functions from new object to 'childObjectName_base' object
+    for i in $parentFuncs; do
+        #get the original function code and create a new function
+        local funcCode=$(declare -f $i)
+
+        #replace '$childObjectName' in the function name by "$childObjectName""_base" (replace only the first ocurrence)
+        #funcCode=$(echo "$funcCode" | sed "s/$objectName""_/$newObjectName""_/")
+        funcCode=$(echo "$funcCode" | sed "0,/$objectName""_/{s//$newObjectName""_/}")
+
+        #create the new function
+        eval "$funcCode"
+    done
+
 }
 
 #recursive scan .sh files

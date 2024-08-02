@@ -4,10 +4,26 @@
 
 #init the class. Receive as an argument the repo url and the path to the git repository
 #project name is used as an unique id to create folders
-this->init(){ local projectName="$1"; local repoUrl="$2"; local _gitRepoPath_="$3"; local _shm_namespace_="$4"; local _shm_directory="$5"
+this->init(){ 
+    #arguments
+    local projectName="$1"; 
+    local repoUrl="$2"; 
+    local _gitRepoPath_="$3"; 
+    local _shm_namespace_="$4"; 
+    local _shm_directory="$5"; 
+    local _aditionalGitCloneArgs_="$6"
+    local _logLibObject_="$7"
+    
+    
     this->projectName="$projectName"
     this->repoUrl="$repoUrl"
     this->gitRepoPath="$_gitRepoPath_"
+    this->additionalGitCloneArgs="$_aditionalGitCloneArgs_"
+    this->logManager="$_logLibObject_"
+
+    "$this->logManager""->newNLog" "gitobserver" "this->log"
+    #CREATE A CUSTOM LOG LEVEL FOR COMMAND INTERCEPTION
+    createLogLevel "COMMAND_TRACE" 25 '\033[0;34m'
 
     new "eventstream.sh" "this->onCommit" "" 1
     new "eventstream.sh" "this->onTag" "" 1
@@ -32,10 +48,10 @@ this->init(){ local projectName="$1"; local repoUrl="$2"; local _gitRepoPath_="$
         #check if 'PROGRAM' is defined
         if [ ! -z "$PROGRAM" ]; then
             #add a periodic task to the scheduler
-            echo "Adding periodic task to the scheduler to check for new commits in the repository '$this->repoUrl' every 5 seconds"
+            this->log->info "Adding periodic task to the scheduler to check for new commits in the repository '$this->repoUrl' every 5 seconds"
             scheduler->runPeriodically "this->work" 5
         else
-            echo "The scheduler (from program.sh) is not loaded. You must call the 'work' or 'workLoop' function by yourself to make the GitObserver work"
+            this->log->warning "The scheduler (from program.sh) is not loaded. You must call the 'work' or 'workLoop' function by yourself to make the GitObserver work"
         fi
     #}
 }
@@ -43,13 +59,18 @@ this->init(){ local projectName="$1"; local repoUrl="$2"; local _gitRepoPath_="$
 #this function make all the class work
 this->work(){
     #clone the repositore if the folder does not exist
+    this->log->info "checking folder $this->gitRepoPath/git"
     if [ ! -d "$this->gitRepoPath/.git" ]; then
-        printf "Clonign repository \n    '$this->repoUrl' in \n    $this->gitRepoPath\n"
-        git clone "$this->repoUrl" "$this->gitRepoPath" > /dev/null
+        this->log->interceptCommandStdout "$COMMAND_TRACE" "git clone $this->additionalGitCloneArgs \"$this->repoUrl\" \"$this->gitRepoPath\""
+
+        cd "$this->gitRepoPath"
+        this->log->interceptCommandStdout "$COMMAND_TRACE" "git submodule init"
+        this->log->interceptCommandStdout "$COMMAND_TRACE" "git submodule update --init --depth=1"
     fi
+
     cd "$this->gitRepoPath"
 
-    git fetch --all > /dev/null
+    this->log->interceptCommandStdout  "$COMMAND_TRACE" "git fetch --all"
 
     _this->checkCommitsAndTags
 }
@@ -72,7 +93,7 @@ _this->checkCommitsAndTags(){
 
     #list all the commits before the 'lastCommit'
     if [ -z "$lastCommit" ]; then
-        echo "The repository was just cloned. Only the last commit will be sent to the observers" #the commit is sent to observer after the 'for' over the commits
+        this->log->warning "The repository was just cloned. Only the last commit will be sent to the observers" #the commit is sent to observer after the 'for' over the commits
 
         local commits=$(git log --all --pretty=format:"%H" --reverse)
     else

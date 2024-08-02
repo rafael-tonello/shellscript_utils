@@ -49,6 +49,14 @@ program_init(){ local shellscriptUtilsPath=$1; local autoScanCurrentFolder=$2;
             scheduler_periodicTasks_pushBack "$callback" "$miliseconds" "$initialTimeStamp"
         }
 
+        scheduler_eraseDelayed(){ local taskId=$1
+            scheduler_delayedTasks_remove "$taskId"
+        }
+
+        scheduler_erasePeriodic(){ local taskId=$1
+            scheduler_periodicTasks_remove "$taskId"
+        }
+
         
         scheduler_work(){
             scheduler_periodicTasks_forEach "__f(){
@@ -100,6 +108,25 @@ program_init(){ local shellscriptUtilsPath=$1; local autoScanCurrentFolder=$2;
                 scheduler_work
                 sleep $_taskCheckInterval_
             done
+        }
+
+        scheduler_waitFor(){ local checkCallback=$1; local doneCallback=$2; local _taskCheckInterval_=$3
+            if [ "$_taskCheckInterval_" == "" ]; then
+                _taskCheckInterval_=0.5
+            fi
+
+            scheduler_runPeriodically "__f(){
+                eval \"$checkCallback\"
+                
+                if [ \$? -eq 0 ]; then
+                    eval \"$doneCallback\"
+                    scheduler_erasePeriodic \"\$1\"
+                fi
+            }; __f" $_taskCheckInterval_
+        }
+
+        waitFor(){
+            return schedule_waitFor "$@"
         }
 
     #scheduler

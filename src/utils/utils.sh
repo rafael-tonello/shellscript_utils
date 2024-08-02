@@ -111,3 +111,20 @@ this->interceptCommandStdout(){ local command=$1; local lambda=$2
         eval "$lambda \"\$line\""
     done
 }
+
+#execute a command and return its outputs in the _r variable
+#param command: the command to be executed
+#param @: the command arguments
+#return _r: the command standard output
+#return _r->error: the command standard error
+this->runCommandAndGetOutput(){ local command=$1
+    shift
+    eval "$command "$@" >/dev/shm/tmpfile 2>/dev/shm/tmpfile_err"
+    local retCode=$?
+    _r=$(cat /dev/shm/tmpfile)
+    _r->error=$(cat /dev/shm/tmpfile_err)
+    rm /dev/shm/tmpfile
+    rm /dev/shm/tmpfile_err
+    return $retCode;
+}
+
