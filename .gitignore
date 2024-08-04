@@ -1,1 +1,6 @@
-ideas
+#remove the folder ideas
+ideas/
+.vscode/
+
+#ignore files that start with sed
+sed*

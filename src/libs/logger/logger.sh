@@ -53,11 +53,12 @@ createLogLevel "CRITICAL" 60 '\033[0;31m'
 
 
 #[log_levels_def_$INFO], [ident_data_default_1]
-this->init(){ local alowedloglevels=$1; local identData=$2;
+this->init(){ local alowedloglevels=$1; local identData=$2; local useMiliseconds=$3
     #declare -A _this->writers
 
     _this->alowedloglevels=$alowedloglevels
     _this->identData=$identData
+    _this->useMiliseconds=$useMiliseconds
 
     if [ "$_this->logToTerminal" == "" ]; then
         _this->logToTerminal=1
@@ -71,7 +72,7 @@ this->init(){ local alowedloglevels=$1; local identData=$2;
         _this->identData=1
     fi
 
-    shift; shift;
+    shift; shift; shift;
     for writer in "$@"; do
         this->addWriter "$writer"
     done
@@ -211,7 +212,11 @@ this->critical(){
 _this->lineHeader(){
     level=$1
     name=$2
-    echo "[$(date +"%Y-%m-%d %H:%m:%S%z")][$(_this->level_to_string $level)][$name] ";
+    if [ "$_this->useMiliseconds" == "1" ]; then
+        echo "[$(date +"%Y-%m-%d %H:%m:%S.%3N%z")][$(_this->level_to_string $level)][$name] ";
+    else
+        echo "[$(date +"%Y-%m-%d %H:%m:%S%z")][$(_this->level_to_string $level)][$name] ";
+    fi
     return 0
 }
 
