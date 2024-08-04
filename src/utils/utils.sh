@@ -128,3 +128,17 @@ this->runCommandAndGetOutput(){ local command=$1
     return $retCode;
 }
 
+# error derivation functions {
+    this->derivateError(){ local existingError="$1"; local newError="$2"
+        #replace all ocurrences of '└►' by '  └►'
+        existingError=$(echo "$existingError" | sed 's/└►/  └►/g')
+        newError="$newError:\n  └►$existingError"
+        _error="$newError"
+        _r="$newError"
+    }
+
+    this->derivateError2(){ local newError="$1"; local existingError="$2"
+        #replace all ocurrences of '└►' by '    └►'
+        this->derivateError "$existingError" "$newError"
+    }
+#}
