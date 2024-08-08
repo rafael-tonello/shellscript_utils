@@ -43,7 +43,7 @@ this->init(){ local name="$1"; local otherValue="$2";
 }
 
 this->doSomething(){
-    echo "doing some===>>> The `git_import` function will not work if the 'git' command is not installed in the computer.thing"
+    echo "doing something"
 }
 
 this->printNameAndOtherValue(){
@@ -56,22 +56,45 @@ this->printNameAndOtherValue(){
 
 ```shell script
 #file main.sh
-source "shellscript_utils/new.sh"
 
+
+#this lines will recall your script through the 'new' function and will allow you to use Object Orientation right in you project first file
+if [ "$1" != "new" ]; then 
+    #include the new.sh file
+    source "shellscript_utils/new.sh"
+
+    #recall the file through the 'new' function
+    sourceFile="$0"
+    autoinit=0; new_f "$sourceFile" __app__ "$@"
+    exit $?
+fi
+
+#and here you can use object orientation to create and init the 'MyService' class
 new "MyService" "objName"
-objName->init
+
+...
+
 ```
 
-... and Call objects methods
+... and Call object methods
 
 Note: To call object methods, you need to use the '->' operator. The '->' operator is used to access the object properties and methods.
 
 ```shell script
 #file main.sh
-source "shellscript_utils/new.sh"
+#this lines will recall your script through the 'new' function and will allow you to use Object Orientation right in you project first file
+if [ "$1" != "new" ]; then 
+    #include the new.sh file
+    source "shellscript_utils/new.sh"
 
-new "MyService" "objName"
-objName->init "Jhon Doe" "another value to be printed"
+    #recall the file through the 'new' function
+    sourceFile="$0"
+    autoinit=0; new_f "$sourceFile" __app__ "$@"
+    exit $?
+fi
+
+#and here you can use object orientation to create and init the 'MyService' class
+new "MyService" "objName" "Jhon Doe" "another value to be printed"
 
 objName->doSomething
 #yeah! You should use '->' to acces internals of the object. May be I will try to change it in the future to use '.' (support for '->' will be maintained)
@@ -80,16 +103,35 @@ objName->printNameAndOtherValue
 ```
 
 
+# now, you just need to run your main file
+
+```shell script
+./main.sh
+```
+
+# In the code above:
+    * the file main.sh will be loaded;
+    * the new.sh file will be sourced;
+    * the new.sh file will prepare (replace all occurrences of 'this->' with the [object name]_) and source the file main.sh
+    * the MyService.sh file will and prepared (all occurrences of 'this->' will be replaced by '[objName]_') and sourced
+    * the new.sh file will look, in the MyService class, for a method called 'init' and call it with the arguments "Jhon Doe" and "another value to be printed"
 
 
-#### leting 'new' call the 'init' method for you
-In the example above, we called the 'init' method after the creation of our objec. Bu you can let the 'new' function call the 'init' method for you. To do this, you need to create a 'init' method in your class file. The 'new' function have an argument that allo you to do it:
+#### Calling the init method manually
+The init method is, in simple words, the constructor of the class.
+
+In the example above, the method 'init' is called automatically by new.sh. But you can call it by yourself if you want.
+To do this, you need, for sure, create a 'init' method in your class file and set the 'autoinit' variable to 0 before call the 'new' function and explicitly call the 'init' method of the object.
 
 ```shell script
 #file main.sh
 source "shellscript_utils/new.sh"
 
-new "MyService" "objName" "" 1 "init arg1" "init arg2" "init arg ..."
+#autoinit=0 instructs the new function to not call the 'init' method of the object
+autoinit=0; new "MyService" "objName"
+
+#explicitly calling the 'init' method of the object
+objName->init arg1" "Jhon Doe" "another value to be printed"
 
 ```
 
