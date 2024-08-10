@@ -18,7 +18,6 @@ this->init(){
     new_f "./src.tests/libs.tests/translate.test.sh" this->translateTests "this->tests"
     new_f "./src.tests/libs.tests/eventbus.test.sh" this->eventbusTests "this->tests"
     new_f "./src.tests/queue.test.sh" this->queueTests "this->tests"
-    echo 4
 
 
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
