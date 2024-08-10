@@ -294,8 +294,9 @@ else
 fi
 
 
-import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
-    local cacheFolder="$project_dir/.newshgitrepos"
+#import a repository to your project. After the import, you can call new with the repository class names
+import_git(){ local gitUrl=$1; local _global_=$2; local _commit_=$3
+    local cacheFolder="$project_dir/.shellscript_utils/newshgitrepos"
     
 
     if [ "$_commit_" == "" ]; then
@@ -303,8 +304,8 @@ import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
 
     fi
     
-    if [ "$_portable_" == "1" ]; then
-        cacheFolder="$HOME/.newshgitrepos"
+    if [ "$_global_" == "1" ]; then
+        cacheFolder="$HOME/.shellscript_utils/newshgitrepos"
     fi
 
     if [ ! -d "$cacheFolder" ]; then
@@ -331,6 +332,55 @@ import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
 
     scan_folder_for_classes "$gitFolder"
     return 0
+}
+
+
+#import a files from the internet. After the import, you can do a 'new' in the imported file
+import_webFile(){ local fileUrl=$1; local _global_=$2;
+    #get urlBase after ://
+    local protoFileName=$(echo $fileUrl | sed 's/.*:\/\///')
+
+    #get the directory name
+    #local protoFileFolder=$(dirname $urlBase)
+
+    local cacheFolder="$project_dir/.shellscript_utils/webfiles/"
+
+    if [ "$_global_" == "1" ]; then
+        cacheFolder="$HOME/.shellscript_utils/webfiles/"
+    fi
+
+    local filename=$cacheFolder$protoFileName
+    local folder=$(dirname $filename)
+
+    if [ ! -d "$folder" ]; then
+        mkdir -p "$folder"
+    fi
+
+    #try download the file
+    if ! command -v curl &> /dev/null; then
+        curl -s "$fileUrl" > "$filename"".tmp"
+    elif ! command -v wget &> /dev/null; then
+        wget -q "$fileUrl" -O "$filename"".tmp"
+    else
+        >&2 echo "You need to have 'curl' or 'wget' installed to download the file"
+        return 1
+    fi
+
+    #check if command was executed with sucess
+    if [ "$?" != "0" ]; then
+        >&2 echo "Error downloading file"
+        return 1
+    fi
+
+    #if downloaded with sucess, replace the original file (if exists) withe the .tmp file
+    if [ -f "$filename" ]; then
+        rm -f "$filename" 2>/dev/null
+    fi
+    mv "$filename"".tmp" "$filename"
+
+    return 0
+
+    scan_folder_for_classes "$folder"
 }
 
 displaysObjecMemory(){

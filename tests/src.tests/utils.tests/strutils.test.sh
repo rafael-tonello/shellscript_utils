@@ -55,7 +55,9 @@ this->testReplace(){
     local result=$(su->replace "normal word, %%, normal word, %%" "%%" "replaced word")
 
     if [ "$result" != "$desired" ]; then
-        _error="replace did not return the expected result. Expected: $desired, got: $result"
+        _error="replace did not return the expected result. Expected: $desired, got: $result"tashed changes
+        _expected="$desired"
+        _returned="$result"
         return 1
     fi
     return 0
@@ -70,6 +72,8 @@ this->replace_2(){
 
     if [ "$result" != "$desired" ]; then
         _error="replace_2 did not return the expected result. Expected: $desired, got: $result"
+        _expected="$desired"
+        _returned="$result"
         return 1
     fi
     return 0
@@ -81,7 +85,7 @@ this->testFormat(){
     local result=$(su->format "%%" "the key is %% and key is %%" "key" "value")
 
     if [ "$result" != "$expected" ]; then
-        _error="format did not return the expected result. Expected: $expected, got: $result"
+        _error="format did not return the expected result. Expected: $expected, got: $result"Stashed changes
         return 1
     fi
     return 0
