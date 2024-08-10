@@ -1,1 +1,2 @@
-Removed trash sed files
+- Removed trash sed files
+- Added miliseconds (optional) to logs

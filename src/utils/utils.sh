@@ -1,6 +1,8 @@
 #!/bin/bash
 if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' function in the file 'new.sh' (of shellscript_utils)"; exit 1; fi
 
+this->init(){ :; }
+
 this->makeupPrint(){ local message=$1; local color=$2; local bold=$3; local underline=$4;
     local colorCode=""
     local underlineCode=""
@@ -128,11 +130,19 @@ this->runCommandAndGetOutput(){ local command=$1
     return $retCode;
 }
 
-# error derivation functions {
+this->copyVars(){ local source=$1; local target=$2
+    for var in $(compgen -A variable | grep "^$source"); do
+        local varName=$(echo "$var" | sed "s/^$source//")
+        eval "$target$varName=\$$var"
+    done
+    return 0
+}
+
+# error derivation functions {─ꜜꜜ↓◄┘
     this->derivateError(){ local existingError="$1"; local newError="$2"
         #replace all ocurrences of '└►' by '  └►'
         existingError=$(echo "$existingError" | sed 's/└►/  └►/g')
-        newError="$newError:\n  └►$existingError"
+        newError="$newError: ▼\n  └►$existingError"
         _error="$newError"
         _r="$newError"
     }

@@ -1,6 +1,8 @@
 #!/bin/bash
 if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' function in the file 'new.sh' (of shellscript_utils)"; exit 1; fi
 
+this->init(){ :; }
+
 this->alphaNumericChars="abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_"
 
 #getOnly(source, [validChars])
@@ -39,19 +41,33 @@ this->getOnly_2(){
     _r=$(this->getOnly "${@}")
 }
 
+this->replace(){ local source="$1"; local from="$2"; local to="$3"
+    _r=$(echo $source | sed "s/$from/$to/g")
+}
+
 #replaces all ocureneces of 'every' in 'in' with  each one remain function arguments
-#example: replace "%%" "the key is %% and key is %%" "key" "value" -> "the key is key and key is value
-this->replace(){ 
+#example: format "the key is %% and key is %%" "%%" "key" "value" -> "the key is key and key is value
+this->format(){
     local every=$1;
     shift; local in=$1;
     shift; local result=$in;
     for arg; do
-        result=$(echo $result | sed "s/$every/$arg/");
+        #result=$(echo $result | sed "s/$every/$arg/");
+        result=$(echo $result | sed "s/\"$every\"/\"$arg\"/");
     done;
     echo $result;
 }
 
-#use echo instead _r
+#use _r instead echo
+this->format_2(){
+    _r=$(this->format "$@")
+}
+
+this->replaceEvery(){
+    return this->replace "$@"
+}
+
+#use _r instead echo
 this->replace_2(){
     _r=$(this->replace "${@}")
 }
@@ -76,26 +92,54 @@ this->cut_2(){
 }
 
 
+#returns an bash array. Note: first element is at position 1
 this->split(){ local source=$1; local separator=$2
     #declare the array
     _r=()
 
-    local index=0
+    local count=1
     while [ true ]; do
         #find the separator
-        local index=$(expr index "$source" "$separator")
+        local tmpIndex=$(expr index "$source" "$separator")
 
         #if not found, add the source to the array and break the loop
-        if [ "$index" == "0" ]; then
-            _r[index]="$source"
+        if [ "$tmpIndex" == "0" ]; then
+            _r[0]="$source"
             break
         fi
 
         #add the part of the source to the array
-        _r[index]+=("${source:0:index-1}")
-        index=$((index+1))
+        tmpStr="${source:0:tmpIndex-1}"
+        _r[$count]="$tmpStr"
+        count=$((count+1))
 
         #remove the part of the source
-        source="${source:index}"
+        source="${source:tmpIndex}"
     done
+}
+
+
+#do not use bash arrays. Instead, uses _r->count, _r->0, _r->1, ... Note: first element is at position 0
+this->split_2(){ local source=$1; local separator=$2
+    local count=0
+    while [ true ]; do
+        #find the separator
+        local tmpIndex=$(expr index "$source" "$separator")
+
+        #if not found, add the source to the array and break the loop
+        if [ "$tmpIndex" == "0" ]; then
+            _r->0="$source"
+            break
+        fi
+
+        #add the part of the source to the array
+        tmpStr="${source:0:tmpIndex-1}"
+        eval "_r->$count=\"$tmpStr\""
+        count=$((count+1))
+
+        #remove the part of the source
+        source="${source:tmpIndex}"
+    done
+    _r->count=$count
+    _r=$count
 }
