@@ -1,6 +1,7 @@
 if [ "$1" != "new" ]; then
-    source ../src/new.sh "../src"
+    source ../src/new.sh "$(pwd)"
     scan_folder_for_classes ".."
+    scan_folder_for_classes "."
     new_f "$0" __app__
     exit $?
 fi
@@ -12,6 +13,7 @@ this->init(){
     autoinit=0; new "utils" this->utils
     
     echo "initializing tests"
+    new "new.tests.sh" this->newShTests "this->tests"
     new_f "./src.tests/sharedmemory.test.sh" this->memoryTests "this->tests"
     new_f "./src.tests/thread.test.sh" this->threadTests "this->tests"
     new_f "./src.tests/utils.tests/strutils.test.sh" this->utilsTests "this->tests"
