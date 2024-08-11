@@ -384,6 +384,8 @@ import_webFile(){ local fileUrl=$1; local _global_=$2;
     return 0
 
     scan_folder_for_classes "$folder"
+
+    _r="$filename"
 }
 
 displaysObjecMemory(){
