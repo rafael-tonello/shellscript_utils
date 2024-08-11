@@ -14,12 +14,12 @@ this->init(){
     
     echo "initializing tests"
     new "new.tests.sh" this->newShTests "this->tests"
-    new "sharedmemory.test.sh" this->memoryTests "this->tests"
-    new "thread.test.sh" this->threadTests "this->tests"
-    new "strutils.test.sh" this->utilsTests "this->tests"
-    new "translate.test.sh" this->translateTests "this->tests"
-    new "eventbus.test.sh" this->eventbusTests "this->tests"
-    new "queue.test.sh" this->queueTests "this->tests"
+    new_f "./src.tests/sharedmemory.test.sh" this->memoryTests "this->tests"
+    new_f "./src.tests/thread.test.sh" this->threadTests "this->tests"
+    new_f "./src.tests/utils.tests/strutils.test.sh" this->utilsTests "this->tests"
+    new_f "./src.tests/libs.tests/translate.test.sh" this->translateTests "this->tests"
+    new_f "./src.tests/libs.tests/eventbus.test.sh" this->eventbusTests "this->tests"
+    new_f "./src.tests/queue.test.sh" this->queueTests "this->tests"
 
 
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
