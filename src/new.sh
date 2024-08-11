@@ -191,7 +191,7 @@ inherit_f(){ local parentClassFile=$1; local childObjectName=$2; lcoal _this_key
     local parentClassName=$(basename "$parentClassFile")
     parentClassName="${parentClassName%.*}"
 
-    _replaceMethodObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+    _replaceMethodsObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
     
 }
 
@@ -201,11 +201,11 @@ inherit(){ local parentClassName=$1; local childObjectName=$2; local _this_key_=
 
     local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
 
-    _replaceMethodObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+    _replaceMethodsObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
 
 }
 
-_replaceMethodObjectName(){ local objectName=$1; local newObjectName=$2
+_replaceMethodsObjectName(){ local objectName=$1; local newObjectName=$2
     
     local parentFuncs=$(compgen -A function | grep "^$objectName""_")
 
@@ -340,7 +340,7 @@ import_webFile(){ local fileUrl=$1; local _global_=$2;
     #get urlBase after ://
     local protoFileName=$(echo $fileUrl | sed 's/.*:\/\///')
 
-    #fix protoFileName to be a valid filename
+    #fix the protoFileName to be a valid filename
     protoFileName=$(fixname "$protoFileName" "abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_./")
 
     #get the directory name
