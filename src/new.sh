@@ -340,6 +340,9 @@ import_webFile(){ local fileUrl=$1; local _global_=$2;
     #get urlBase after ://
     local protoFileName=$(echo $fileUrl | sed 's/.*:\/\///')
 
+    #fix protoFileName to be a valid filename
+    protoFileName=$(fixname "$protoFileName" "abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_./")
+
     #get the directory name
     #local protoFileFolder=$(dirname $urlBase)
 
@@ -357,9 +360,9 @@ import_webFile(){ local fileUrl=$1; local _global_=$2;
     fi
 
     #try download the file
-    if ! command -v curl &> /dev/null; then
+    if command -v curl &> /dev/null; then
         curl -s "$fileUrl" > "$filename"".tmp"
-    elif ! command -v wget &> /dev/null; then
+    elif command -v wget &> /dev/null; then
         wget -q "$fileUrl" -O "$filename"".tmp"
     else
         >&2 echo "You need to have 'curl' or 'wget' installed to download the file"

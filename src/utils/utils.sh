@@ -130,12 +130,22 @@ this->runCommandAndGetOutput(){ local command=$1
     return $retCode;
 }
 
-this->copyVars(){ local source=$1; local target=$2
-    for var in $(compgen -A variable | grep "^$source"); do
-        local varName=$(echo "$var" | sed "s/^$source//")
-        eval "$target$varName=\$$var"
+this->copyVars(){ local prefix=$1; local newPrefix=$2
+    for var in $(compgen -A variable | grep "^$prefix"); do
+        local varName=$(echo "$var" | sed "s/^$prefix//")
+        eval "$newPrefix$varName=\$$var"
     done
     return 0
+}
+
+this->copyObject(){
+    this->copyVars "$@"
+    return $?
+}
+
+this->copyStructure(){
+    this->copyVars "$@"
+    return $?
 }
 
 # error derivation functions {─ꜜꜜ↓◄┘

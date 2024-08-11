@@ -79,7 +79,7 @@ _this->loadTranslationsNotFoundFile(){ local fname=$1
 this->t(){ local text=$1
     key=$(_this->fixName "$text")
     
-    local tmp=$text
+    local tmp=$text; shift
     
 
     local found=${_this->translations[$key]}
@@ -88,14 +88,9 @@ this->t(){ local text=$1
     else
         _this->registerUnsavedTranslations "$text"
     fi
-       
-    tmp="\"$tmp\""
-    shift
-    for args; do 
-        tmp="$tmp \"$args\""
-    done  
 
-    eval "_this->strUtils->replace_2 \"%%\" $tmp";
+    _this->strUtils->format_2 "%%" "$tmp" "$@"
+
     printf "$_r"
 }
 

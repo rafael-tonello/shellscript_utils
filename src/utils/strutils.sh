@@ -41,19 +41,26 @@ this->getOnly_2(){
     _r=$(this->getOnly "${@}")
 }
 
+#replace all ocurrences of 'from' in 'source' with 'to'
 this->replace(){ local source="$1"; local from="$2"; local to="$3"
-    _r=$(echo $source | sed "s/$from/$to/g")
+    local result=$(echo $source | sed "s/$from/$to/g")
+    echo $result
 }
+
+#use _r instead echo
+this->replace_2(){
+    _r=$(this->replace "${@}")
+}
+
 
 #replaces all ocureneces of 'every' in 'in' with  each one remain function arguments
 #example: format "the key is %% and key is %%" "%%" "key" "value" -> "the key is key and key is value
 this->format(){
-    local every=$1;
-    shift; local in=$1;
-    shift; local result=$in;
+    local every=$1; shift;
+    local in=$1; shift;
+    local result=$in;
     for arg; do
-        #result=$(echo $result | sed "s/$every/$arg/");
-        result=$(echo $result | sed "s/\"$every\"/\"$arg\"/");
+        result=$(echo $result | sed "s/$every/$arg/");
     done;
     echo $result;
 }
@@ -66,12 +73,6 @@ this->format_2(){
 this->replaceEvery(){
     return this->replace "$@"
 }
-
-#use _r instead echo
-this->replace_2(){
-    _r=$(this->replace "${@}")
-}
-
 
 this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
     local index=$(expr index "$source" "$separator")
