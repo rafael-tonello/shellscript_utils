@@ -14,7 +14,7 @@ this->getOnly(){
     valid_characters=$2
 
     if [ "$valid_characters" == "" ]; then
-        valid_characters=this->alphaNumericChars
+        valid_characters="$this->alphaNumericChars"
     fi
 
     ## Initialize an empty string to store the valid characters
@@ -33,7 +33,8 @@ this->getOnly(){
     #done
 
     # Print the valid string
-    echo $original_string | tr -cd "$valid_characters"
+    local ret=$(echo "$original_string" | tr -cd "$valid_characters")
+    echo "$ret"
     return 0
 }
 
