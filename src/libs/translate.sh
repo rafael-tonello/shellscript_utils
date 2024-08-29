@@ -95,12 +95,12 @@ this->t(){ local text="$1"
 
     key=$(_this->fixName "$text")
     
-    local tmp=$text
+    local tmp="$text"
     
 
     local found=${_this->translations[$key]}
     if [ "$found" != ""  ]; then
-        tmp=${_this->translations[$key]}
+        tmp="${_this->translations[$key]}"
     else
         _this->registerUnsavedTranslations "$text"
     fi
