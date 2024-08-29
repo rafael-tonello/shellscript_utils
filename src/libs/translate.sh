@@ -51,7 +51,9 @@ _this->loadTranslationFile(){ local fname=$1
     fi
 
     while IFS= read -r line || [[ -n "$line" ]]; do
-        #key=$(echo $line | cut -d"$this->cutChar" -f1)
+        if [ "${#line}" -lt 3 ]; then
+            continue
+        fi
     
         key=$(_this->strUtils->cut "$line" "$this->cutChar" 1)
         key=$(_this->fixName "$key")
@@ -74,6 +76,10 @@ _this->loadTranslationsNotFoundFile(){ local fname=$1
     fi
 
     while IFS= read -r line || [[ -n "$line" ]]; do
+        if [ "${#line}" -lt 3 ]; then
+            continue
+        fi
+
         key=$(_this->strUtils->cut "$line" "$this->cutChar" 1)
         key=$(_this->fixName "$key")
 
