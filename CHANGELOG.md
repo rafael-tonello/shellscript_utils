@@ -1,3 +1,4 @@
 - Removed trash sed files
 - Added miliseconds (optional) to logs
 - Import_webFile (download a file to a local folder and make it available to the 'new' function)
+- Bug fixes
