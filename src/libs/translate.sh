@@ -111,7 +111,7 @@ this->t(){ local text="$1"
         tmp="$tmp \"$args\""
     done  
 
-    eval "_this->strUtils->replace_2 \"%%\" $tmp";
+    eval "_this->strUtils->replaceSeq_2 \"%%\" $tmp";
 
 
     #print using tr to remove possible \r from lines

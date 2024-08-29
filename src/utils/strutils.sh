@@ -66,12 +66,16 @@ this->replaceSeq(){
         result=$(echo $result | sed "s/$every/$tmpArg/");
     done;
     echo $result;
-}; this->compose(){ return this->replaceSeq "$@"; }
+}; 
+this->compose(){ return this->replaceSeq "$@"; }; 
+this->format(){ return this->replaceSeq "$@"; }
 
 #use _r instead echo
 this->replaceSeq_2(){
     _r=$(this->replaceSeq "$@")
-}; this->compose_2(){ return this->replaceSeq_2 "$@"; }
+}; 
+this->compose_2(){ return this->replaceSeq_2 "$@"; }; 
+this->format_2(){ return this->replaceSeq_2 "$@"; }
 
 this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
     local index=$(expr index "$source" "$separator")

@@ -23,7 +23,7 @@ this->init(){
 
 
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
-    this->tests->runTests
+    this->tests->runTests 1
     errorCount=$?
 
     echo ""
