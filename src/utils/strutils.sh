@@ -46,22 +46,15 @@ this->getOnly_2(){
 this->replace(){ local source="$1"; local from="$2"; local to="$3"
     local result=$(echo $source | sed "s/$from/$to/g")
     echo $result
-}
-
-this->replaceAll(){
-    this->replace "${@}"
-}
+}; this->replaceAll(){ this->replace "${@}"; }
 
 #use _r instead echo
 this->replace_2(){
     _r=$(this->replace "${@}")
-}
-this->replaceAll_2(){
-    this->replace_2 "${@}"
-}
+}; this->replaceAll_2(){ this->replace_2 "${@}"; }
 
 
-#replaces all ocureneces of 'every' in 'in' with  each one remain function arguments
+#replaces all ocureneces of every 'every' in 'in' with  each one of the remain function arguments
 #example: replaceSeq "the key is %% and key is %%" "%%" "key" "value" -> "the key is key and key is value
 this->replaceSeq(){
     local every=$1;
@@ -73,22 +66,12 @@ this->replaceSeq(){
         result=$(echo $result | sed "s/$every/$tmpArg/");
     done;
     echo $result;
-}
-this->compose(){
-    return this->replaceSeq "$@"
-}
+}; this->compose(){ return this->replaceSeq "$@"; }
 
 #use _r instead echo
 this->replaceSeq_2(){
     _r=$(this->replaceSeq "$@")
-}
-this->compose_2(){
-    return this->replaceSeq_2 "$@"
-}
-
-this->replaceEvery(){
-    return this->replace "$@"
-}
+}; this->compose_2(){ return this->replaceSeq_2 "$@"; }
 
 this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
     local index=$(expr index "$source" "$separator")
