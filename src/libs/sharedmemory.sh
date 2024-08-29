@@ -96,7 +96,7 @@ this->isVarLocked(){ local key=$1;
 }
 
 #creates a file, in the shared memory, to store the value. The file name is the key. The content is the value. The name of the file should be sanitized
-this->setVar(){ local key=$1; local value=$2
+this->setVar(){ local key="$1"; local value="$2"
     local sanitizedKey=$(echo $key | sed 's/[^a-zA-Z0-9]/_/g')
     
     #echo -e $value > "$this->sharedMemoryDir/$sanitizedKey"
@@ -111,7 +111,7 @@ EOF
 }
 
 #a helper to setVar
-this->set(){ this->setVar $1 $2 5; return $?; }
+this->set(){ this->setVar "$1" "$2"; return $?; }
 
 #wait for a variable to be set with a value. The timeout is in seconds
 #this function returns 0 if the value is setted and 1 if the timeout is reached
