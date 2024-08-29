@@ -85,7 +85,12 @@ this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
     if [ "$p1_p2" == "2" ]; then
         tmp="${source:index}"
     else
-        tmp="${source:0:index-1}"
+        #check if index > 0
+        if [ "$index" -gt 0 ]; then
+            tmp="${source:0:index-1}"
+        else
+            tmp=""
+        fi
     fi
     echo $tmp
 }
