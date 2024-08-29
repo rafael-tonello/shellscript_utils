@@ -281,6 +281,8 @@ _this->drawLabel(){
     eval local lblSufix=\$$obj"_sufix"
     eval local lblColor=\$$obj"_color"
     eval local lblPasswordText=\$$obj"_passwordText"
+    eval local lblCurrSize=\$$obj"_drawLabelCtrl_currentTextSize"
+
 
 
     if [ "$lblPasswordText" == "$lposui_invalid" ]; then
@@ -300,19 +302,30 @@ _this->drawLabel(){
     fi
 
 
-    if [ "$lblColor" != "" ]; then 
-        local lblPrefix=$lblColor$lblPrefix; 
+    local completeTextWithNoColors="$lblPrefix$lblPasswordText$lblSufix"
+    if [ "$lblColor" != "" ]; then ss
+        local lblPrefix=$lblColorssslblPrefix; 
         local lblSufix=$lblSufix$lposui_endcolor 
     fi
 
+
+    #clear old text {
+        if [ ! -z "$lblCurrSize" ]; then
+            this->setCursorXY $lblX $lblYss
+            printf '%*s' "$lblCurrSize"
+        fi
+
+        eval "$obj""_drawLabelCtrl_currentTextSize"=${#completeTextWithNoColors}
+    #}
+
     #echo running _this->setCursorXY $lblX $lblY
     this->setCursorXY $lblX $lblY
-
     #echo runnint printf "$lblPrefix$lblText$lblSufix"
 
     if [ "$lblPasswordText" != "" ]; then
         printf "$lblPrefix$lblPasswordText$lblSufix"
     else
+
         printf "$lblPrefix"
         printf "$lblText" 2>/dev/shm/printferrooutput
         local printferr="$(cat /dev/shm/printferrooutput)"
