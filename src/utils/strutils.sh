@@ -48,27 +48,42 @@ this->replace(){ local source="$1"; local from="$2"; local to="$3"
     echo $result
 }
 
+this->replaceAll(){
+    this->replace "${@}"
+}
+
 #use _r instead echo
 this->replace_2(){
     _r=$(this->replace "${@}")
 }
+this->replaceAll_2(){
+    this->replace_2 "${@}"
+}
 
 
 #replaces all ocureneces of 'every' in 'in' with  each one remain function arguments
-#example: format "the key is %% and key is %%" "%%" "key" "value" -> "the key is key and key is value
-this->format(){
-    local every=$1; shift;
-    local in=$1; shift;
-    local result=$in;
+#example: replaceSeq "the key is %% and key is %%" "%%" "key" "value" -> "the key is key and key is value
+this->replaceSeq(){
+    local every=$1;
+    every=$(echo "$every" | sed 's/\//\\\//g')
+    shift; local in=$1;
+    shift; local result=$in;
     for arg; do
-        result=$(echo $result | sed "s/$every/$arg/");
+        local tmpArg=$(echo "$arg" | sed 's/\//\\\//g')
+        result=$(echo $result | sed "s/$every/$tmpArg/");
     done;
     echo $result;
 }
+this->compose(){
+    return this->replaceSeq "$@"
+}
 
 #use _r instead echo
-this->format_2(){
-    _r=$(this->format "$@")
+this->replaceSeq_2(){
+    _r=$(this->replaceSeq "$@")
+}
+this->compose_2(){
+    return this->replaceSeq_2 "$@"
 }
 
 this->replaceEvery(){
