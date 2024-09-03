@@ -145,3 +145,23 @@ this->waitForValue(){ local key=$1; local value=$2 local timeout=$3;
     _error="$key not set"
     return 1
 }
+
+this->listVars(){
+    local index=0;
+    #scroll over the files in the shared memory directory
+    for file in $this->sharedMemoryDir/*; do
+        #get the file name
+        eval "_r->$index=\$(basename $file)"
+        index=$((index+1))
+    done
+
+    _r->count=$index
+    _r->size=$index
+    _r->length=$index
+    _r=$index
+}
+
+this->listVars_2(){
+    #just list the files
+    ls -1 "$this->sharedMemoryDir"
+}

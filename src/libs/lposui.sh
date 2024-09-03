@@ -14,17 +14,38 @@ this->init(){
 }
 
 this->finalize(){
-    for i in $(seq 1 $this->labelsCount); do 
-        eval "this->label"$i"_x"=""
-        eval "this->label"$i"_y"="\"\""
-        eval "this->label"$i"_text"="\"\""
-        eval "this->label"$i"_prefix"="\"\""
-        eval "this->label"$i"_sufix"="\"\""
-        eval "this->label"$i"_color"="\"\""
-    done
+    this->eraseAll
     clear
 
     this->setCursorXY $this->defaultX $this->defaultY
+}
+
+this->eraseAll(){
+    this->eraseAllLabels
+}
+
+this->eraseAllLabels(){
+    for i in $(seq 1 $this->labelsCount); do 
+        eval "this->label"$i"_x"=""        
+        eval "unset this->label"$i"_x"
+
+        eval "this->label"$i"_y"="\"\""
+        eval "unset this->label"$i"_y"
+
+        eval "this->label"$i"_text"="\"\""
+        eval "unset this->label"$i"_text"
+
+        eval "this->label"$i"_prefix"="\"\""
+        eval "unset this->label"$i"_prefix"
+
+        eval "this->label"$i"_sufix"="\"\""
+        eval "unset this->label"$i"_sufix"
+
+        eval "this->label"$i"_color"="\"\""
+        eval "unset this->label"$i"_color"
+
+    done
+    this->labelsCount=0
 }
 
 lposui_black='\033[0;30m'
