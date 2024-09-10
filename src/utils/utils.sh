@@ -162,3 +162,27 @@ this->copyStructure(){
         this->derivateError "$existingError" "$newError"
     }
 #}
+
+
+#receives a variable name and arguments sent to a function and returns the value of the argument
+#a function can user this function to get the value of an argument:
+#   myfunc(){
+#       local argument=$(getArgV "argument" "$@")
+#       echo "$argument"
+#   }
+#}
+#and you can call the function like this:
+#   myfunc "argument=123"
+this->getArgV(){local varName="$1"; 
+    shift
+    for arg in "$@"; do
+        if [ "${arg%%=*}" == "$varName" ]; then
+            echo "${arg#*=}"
+            return 0
+        fi
+    done
+    return 1
+}
+this->gav(){ this->getArgV "$@"; }
+getArgV(){ this->getArgV "$@"; }
+gav(){ this->getArgV "$@"; }

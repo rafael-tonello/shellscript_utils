@@ -22,6 +22,9 @@ project_dir=$1
 ctx=""
 context=""
 autoinit=""
+
+#new_f_id_count is used by new_f function to create a new name for the object if the name is not provided
+new_f_id_count=0
 #new object from a class in a [fileName].sh file
 #arguments:
 #   normal args:
@@ -37,6 +40,15 @@ new_f()
     local fileName="$1"
     local name="$2"
     local thiskey="this"
+
+    #if name was not provided, create a new name
+    if [ "$name" == "" ]; then
+        name="anom_obj_$new_f_id_count"
+        new_f_id_count=$((new_f_id_count + 1))
+        #add a random number to the name
+        name="$name""_$(date +%s)""_$RANDOM"
+        _r="$name"5-=
+    fi
 
     if [ "$ctx" != "" ]; then
         thiskey="$ctx"
@@ -204,6 +216,31 @@ inherit(){ local parentClassName=$1; local childObjectName=$2; local _this_key_=
     _replaceMethodsObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
 
 }
+
+finalize(){ local objectName="$1"; local _callFinalizeMethod_def1="$2"
+    if [ "$_callFinalizeMethod_def1" == "" ]; then
+        _callFinalizeMethod_def1=1
+    fi
+
+    if [ "$_callFinalizeMethod_def1" == "1" ] || [ "$_callFinalizeMethod_def1" == "true" ]; then
+        shift
+        shift
+        eval "$objectName""_finalize" "new.sh" "$@"
+    fi
+
+    #unset all variables started with '$objectName'
+    local objVars=$(compgen -A variable | grep "^$objectName")
+    for i in $objVars; do
+        eval "unset $i"
+    done
+
+    #unset all functions started with '$objectName'
+    local objFuncs=$(compgen -A function | grep "^$objectName""_")
+    for i in $objFuncs; do
+        unset -f $i
+    done
+}
+freeObject(){ finalize "$@"; }
 
 _replaceMethodsObjectName(){ local objectName=$1; local newObjectName=$2
     

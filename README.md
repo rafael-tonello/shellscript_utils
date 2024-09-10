@@ -1,5 +1,5 @@
 # About
-This project contains a collection of shell scripts that are designed to assist in the development of projects written in ShellScript. 
+Shell script utils (SHU) contains a collection of shell scripts that allow object orientation in ShellScript. It is designed to assist in the development of projects written in ShellScript. 
 
 These scripts provide various utilities and functions that can be used to streamline the development process and enhance the functionality of ShellScript projects. The core feature is the file new.sh, that allow object orientation programmin in ShellScript.
 
@@ -120,7 +120,9 @@ Ok, It is the basic of class creation, object instantiation and method calling. 
 ---
 ---
 
-# New.sh
+# The library
+
+## New.sh
 The `new.sh` file is a crucial component of this project. It enables object-oriented-like programming in ShellScripting. The `new_f` is the core function of new.sh and receives, as arguments, a filename and an object name. It treats the file as a class and creates an object based on it.
 
 Internally, `new_f` replaces all occurrences of 'this->' with the object name, generating a whole set of variables and functions with the same prefix (object name), simulating objects.
@@ -210,9 +212,21 @@ new "MyService" "objName"
 objName->init
 ```
 
+## Other cool things 
+### git_import
+The `new.sh` also contains the `git_import` function, that allows you to import files (call new, new_f, ...) from a git repository. The `git_import` function receives the repository URL and a parameter named '_portable_'. This function will, basically, clone the repositorie in a local folder and scan all .sh files of it.
 
+If you pass the '_portable_' parameter with the value 1, the `git_import` will work in a portable way, that is, it will work in a local folder (.newshgitrepos) inside the project folder (the folder returned by 'pwd' when the new.sh file is sourced). If you pass the '_portable_' parameter with the value 0, the `git_import` will work in a global way, using  the folder "~/.newshgitrepos" folder.
 
-# Writing classes
+#### Portable mode = 0
+In this case, a global location will be used in the current computer (the folder "~/.newshgitrepos"). And the repos will be shared between all projects that use the `git_import` function. This is the default mode.
+
+#### Portable mode = 1
+In this case, a local location will be used in the current project (the folder ".newshgitrepos" inside the project folder). And the repos will be shared only between the files of the current project.
+
+# Object Orientation
+
+## Writing classes
 
 To write classes, you just need to treat the .sh files as you class. The class name is your .sh file name. Inside the .sh files, you can use 'this->[prop or function anme]' to write your class properties and functions. One important method to implement is 'init' (this->init), that is treated as your constructor/inicialization method. See an example bellow:
 
@@ -259,7 +273,7 @@ this->init(){
 
 ```
 
-# inheritance
+## inheritance
 yes, you can do a kind of inheritance using new.sh. When a new object is created, its file is 'sources' with some arguments:
 - the first argument is the word 'new', indicating that the file is being 'sourced' by the new.sh file
 - the second argument is the name of the class that is being instantiated
@@ -294,16 +308,50 @@ obj->overrideThis #will print "this is the child"
 ```
 
 
-# git_import
-The `new.sh` also contains the `git_import` function, that allows you to import files (call new, new_f, ...) from a git repository. The `git_import` function receives the repository URL and a parameter named '_portable_'. This function will, basically, clone the repositorie in a local folder and scan all .sh files of it.
 
-If you pass the '_portable_' parameter with the value 1, the `git_import` will work in a portable way, that is, it will work in a local folder (.newshgitrepos) inside the project folder (the folder returned by 'pwd' when the new.sh file is sourced). If you pass the '_portable_' parameter with the value 0, the `git_import` will work in a global way, using  the folder "~/.newshgitrepos" folder.
 
-## Portable mode = 0
-In this case, a global location will be used in the current computer (the folder "~/.newshgitrepos"). And the repos will be shared between all projects that use the `git_import` function. This is the default mode.
+---
+---
 
-## Portable mode = 1
-In this case, a local location will be used in the current project (the folder ".newshgitrepos" inside the project folder). And the repos will be shared only between the files of the current project.
+# Embedded libraries
+The `shellscript_utils` project also contains some embedded libraries that can be used in your projects. These libraries are:
+## Logger
+
+## Eventbus
+
+## Eventstream
+
+## SharedMemory
+
+## Tests
+
+## List
+
+## PersisQueue
+
+## SSHManager
+
+## Translate
+
+## GitObserver
+
+## Utilitaries libraries
+### StrUtils
+
+### Utils
+
+### NetworkUtils
+
+## Threads
+
+
+
+
+
+## TelegramSend
+
+## Animations
+
 
 ---
 
