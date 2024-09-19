@@ -203,7 +203,7 @@ inherit_f(){ local parentClassFile=$1; local childObjectName=$2; lcoal _this_key
     local parentClassName=$(basename "$parentClassFile")
     parentClassName="${parentClassName%.*}"
 
-    _replaceMethodsObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+    _replaceMethodsAndVarsWithObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
     
 }
 
@@ -211,9 +211,9 @@ inherit(){ local parentClassName=$1; local childObjectName=$2; local _this_key_=
 
     autoinit=0; new "$parentClassName" "$childObjectName" "$_this_key_"
 
-    local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
+    #local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
 
-    _replaceMethodsObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+    _replaceMethodsAndVarsWithObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
 
 }
 
@@ -231,18 +231,21 @@ finalize(){ local objectName="$1"; local _callFinalizeMethod_def1="$2"
     #unset all variables started with '$objectName'
     local objVars=$(compgen -A variable | grep "^$objectName")
     for i in $objVars; do
+        #eval "$i=\"\""
         eval "unset $i"
     done
 
     #unset all functions started with '$objectName'
     local objFuncs=$(compgen -A function | grep "^$objectName""_")
     for i in $objFuncs; do
+        #eval "$i(){ :; }"
         unset -f $i
     done
 }
+destroy(){ finalize "$@"; }
 freeObject(){ finalize "$@"; }
 
-_replaceMethodsObjectName(){ local objectName=$1; local newObjectName=$2
+_replaceMethodsAndVarsWithObjectName(){ local objectName=$1; local newObjectName=$2
     
     local parentFuncs=$(compgen -A function | grep "^$objectName""_")
 
@@ -257,6 +260,21 @@ _replaceMethodsObjectName(){ local objectName=$1; local newObjectName=$2
 
         #create the new function
         eval "$funcCode"
+    done
+
+    local parentProperties=$(compgen -A variable | grep "^$objectName""_")
+
+    #copy all properties from new object to 'childObjectName_base' object
+    for i in $parentProperties; do
+        #get the original property value and create a new property
+        local propValue=$(eval "echo \$$i")
+
+        #replace '$childObjectName' in the property name by "$childObjectName""_base" (replace only the first ocurrence)
+        #propValue=$(echo "$propValue" | sed "s/$objectName""_/$newObjectName""_/")
+        propValue=$(echo "$propValue" | sed "0,/$objectName""_/{s//$newObjectName""_/}")
+
+        #create the new property
+        eval "$i=\"$propValue\""
     done
 
 }

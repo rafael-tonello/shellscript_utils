@@ -12,53 +12,59 @@
 
 #initializes thes shared memory. The first parameter is the namespace. The second parameter (optional) is the 
 #directory where the shared memory will be stored. If the _storageDirectory_ is not provided, the shared memory will be stored in /dev/shm
-this->init(){ local namespace=$1; local _storageDirectory_=$2
+this->init(){ local namespace="$1"; local _storageDirectory_="$2"
     if [ "$_storageDirectory_" == "" ]; then
         _storageDirectory_="/dev/shm"
     fi
 
-    this->_storageDirectory=$_storageDirectory_
+    this->_storageDirectory="$_storageDirectory_"
 
-    _this->initSharedMemory $namespace
+    this->_initSharedMemory "$namespace"
 }
 
 this->finalize(){ local _clearNamespace_=$1
     if [ "$_clearNamespace_" == "1" ]; then
-        _this->clearNamespace
+        this->_clearNamespace
     fi
 }
 
-_this->clearNamespace(){
+this->_clearNamespace(){
     rm -rf $this->sharedMemoryDir
 }
 
 #this function creates a virtual directory in the RAM to store key-values
-_this->initSharedMemory(){ local namespace=$1;
-    this->sharedMemoryDir="$this->_storageDirectory""/sharedMemory_"$namespace
+this->_initSharedMemory(){ local namespace="$1";
+    this->sharedMemoryDir="$this->_storageDirectory""/shu/sharedMemory/$namespace"
     mkdir -p "$this->sharedMemoryDir"
 }
 
 
-this->getVar(){ local key=$1;
+this->getVar(){ local key="$1"; _default_value_="$2"
     local sanitizedKey=$(echo $key | sed 's/[^a-zA-Z0-9]/_/g')
     #check if $key begins with $globaldbg (globaldbg should be not empty)
-    
-    cat "$this->sharedMemoryDir/$sanitizedKey" 2>/dev/null
+
+    local v=$(cat "$this->sharedMemoryDir/$sanitizedKey" 2>/dev/null)
+    if [ "$v" == "" ]; then
+        _r="$_default_value_"
+    else
+        _r="$v"
+    fi
+    echo "$_r";
     return 0
 }
 
 #internally calls the getVar function, but the value is not printed. It is stored in the global variable _r
-this->getVar2(){ local key=$1;
+this->getVar2(){ local key="$1";
     _r=$(this->getVar "$key")
     return 0
 }
 
 #a helper to getVar
-this->get(){ this->getVar $1; }
-this->get2(){ this->getVar2 $1; }
+this->get(){ this->getVar "$@"; }
+this->get2(){ this->getVar2 "$@"; }
 
 
-this->lockVar(){ local key=$1; local timeout=$2;
+this->lockVar(){ local key="$1"; local timeout="$2";
     local sanitizedKey=$(echo $key | sed 's/[^a-zA-Z0-9]/_/g')
     local start=$(date +%s)
 
@@ -68,25 +74,25 @@ this->lockVar(){ local key=$1; local timeout=$2;
     fi
 
     while [ $(( $(date +%s) - $start )) -lt $timeout ]; do
-        if [ ! -f "$this->sharedMemoryDir/$sanitizedKey.lock" ]; then
-            touch "$this->sharedMemoryDir/$sanitizedKey.lock"
+        mkdir $this->sharedMemoryDir/$sanitizedKey.lock >> /dev/null 2>&1
+        if [ "$?" == "0" ]; then
             return 0
         fi
-        sleep 0.25
+        sleep $(echo "scale=2; ($(( RANDOM % 50)) + 100) / 1000" | bc)
     done
     _error="$key is locked"
     return 1
 }
-this->lock(){ this->lockVar $1 $2; return $?; }
+this->lock(){ this->lockVar "$@"; return $?; }
 
-this->unlockVar(){ local key=$1;
+this->unlockVar(){ local key="$1";
     local sanitizedKey=$(echo $key | sed 's/[^a-zA-Z0-9]/_/g')
-    rm "$this->sharedMemoryDir/$sanitizedKey.lock" &>/dev/null
+    rm -rf "$this->sharedMemoryDir/$sanitizedKey.lock" &>/dev/null
 }
 
-this->unlock(){ this->unlockVar $1; }
+this->unlock(){ this->unlockVar "$@"; }
 
-this->isVarLocked(){ local key=$1;
+this->isVarLocked(){ local key="$1";
     local sanitizedKey=$(echo $key | sed 's/[^a-zA-Z0-9]/_/g')
     if [ -f "$this->sharedMemoryDir/$sanitizedKey.lock" ]; then
         return 0
@@ -119,7 +125,7 @@ this->set(){ this->setVar "$1" "$2"; return $?; }
 #   _r is the time in seconds
 #   _r->s is the time in seconds
 #   _r->ms is the time in miliseconds
-this->waitForValue(){ local key=$1; local value=$2 local timeout=$3;
+this->waitForValue(){ local key="$1"; local value="$2" local timeout="$3";
     #convert timeout to miliseconds
     timeout=$(( $timeout * 1000 ))
     local sanitizedKey=$(echo $key | sed 's/[^a-zA-Z0-9]/_/g')
@@ -164,4 +170,32 @@ this->listVars(){
 this->listVars_2(){
     #just list the files
     ls -1 "$this->sharedMemoryDir"
+}
+
+#runs a callback inf a locked context. If another 'runLocked' is called with the same lock group name, 
+#it will wait until the first 'runLocked' finishes. If you do not provide a lock group name, a default
+#lock group name is used
+this->runLocked(){ local callback="$1"; local _customLockGroupName_="$2"
+    if [ "$_customLockGroupName_" == "" ]; then
+        _customLockGroupName_="runLockedDefaultLocker"
+    fi
+    this->lock "$_customLockGroupName_"
+
+    eval "$callback"
+
+    this->unlock "$_customLockGroupName_"
+}
+
+
+#runs a callback in a locked context. The callback is executed in background (subshell) and will
+#receive a 'unlocker function' to be evaluated when it finishes its work.
+this->runLockedAsync(){ local callback="$1"; local _customLockGroupName_="$2"
+    if [ "$_customLockGroupName_" == "" ]; then
+        _customLockGroupName_="runLockedDefaultLocker"
+    fi
+    this->lock "$_customLockGroupName_"
+    
+    (eval "$callback __f(){
+        this->unlock \"$_customLockGroupName_\"
+    }; __f") &
 }

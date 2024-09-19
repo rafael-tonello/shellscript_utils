@@ -2,5 +2,10 @@
 ideas/
 .vscode/
 
+.shellscript_utils
+*.log
+
 #ignore files that start with sed
 sed*
+
+tmp/

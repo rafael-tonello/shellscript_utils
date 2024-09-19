@@ -20,32 +20,58 @@ this->finalize(){
     this->setCursorXY $this->defaultX $this->defaultY
 }
 
+this->finalize(){
+    this->eraseAll
+    clear
+
+    this->setCursorXY $this->defaultX $this->defaultY
+}
+
 this->eraseAll(){
     this->eraseAllLabels
 }
 
 this->eraseAllLabels(){
     for i in $(seq 1 $this->labelsCount); do 
-        eval "this->label"$i"_x"=""        
-        eval "unset this->label"$i"_x"
-
-        eval "this->label"$i"_y"="\"\""
-        eval "unset this->label"$i"_y"
-
-        eval "this->label"$i"_text"="\"\""
-        eval "unset this->label"$i"_text"
-
-        eval "this->label"$i"_prefix"="\"\""
-        eval "unset this->label"$i"_prefix"
-
-        eval "this->label"$i"_sufix"="\"\""
-        eval "unset this->label"$i"_sufix"
-
-        eval "this->label"$i"_color"="\"\""
-        eval "unset this->label"$i"_color"
-
+        this->_eraseLabelUsingIndex $i
     done
     this->labelsCount=0
+}
+
+this->_eraseLabelUsingIndex(){ local index=$1; debug=$2
+    this->_setLabelUsingIndex "$index" "" "" " " "" "" "" ""    
+    
+    eval "this->label"$index"_x"=""
+        
+    eval "unset this->label"$index"_x"
+
+    eval "this->label"$index"_y"="\"\""
+    eval "unset this->label"$index"_y"
+
+    eval "this->label"$index"_text"="\"\""
+    eval "unset this->label"$index"_text"
+
+    eval "this->label"$index"_prefix"="\"\""
+    eval "unset this->label"$index"_prefix"
+
+    eval "this->label"$index"_sufix"="\"\""
+    eval "unset this->label"$index"_sufix"
+
+    eval "this->label"$index"_color"="\"\""
+    eval "unset this->label"$index"_color"
+}
+
+this->eraseLabel(){ local labelName="$1";
+    this->_getLabelIndex $labelName
+    local lblIndex=$this->r
+
+    if [ "$lblIndex" != "" ]; then  
+        this->_eraseLabelUsingIndex $lblIndex
+        return 0
+    else
+        _error="Label '$lblName' not found"
+        return 1
+    fi
 }
 
 lposui_black='\033[0;30m'
@@ -143,10 +169,10 @@ this->setLabel()
     local lblColor=$7
     local lblPasswordText=$8
 
-    _this->getLabelIndex $lblName
+    this->_getLabelIndex $lblName
     local lblIndex=$this->r
     if [ "$lblIndex" != "" ]; then  
-        _this->setLabelUsingIndex $lblIndex "$lblX" "$lblY" "$lblText" "$lblPrefix" "$lblSufix" "$lblColor" "$lblPasswordText"
+        this->_setLabelUsingIndex $lblIndex "$lblX" "$lblY" "$lblText" "$lblPrefix" "$lblSufix" "$lblColor" "$lblPasswordText"
         return 0
     else
         _error="Label '$lblName' not found"
@@ -158,10 +184,10 @@ this->setLabel()
 this->getLabelData()
 {
     local lblName=$1
-    _this->getLabelIndex $lblName
+    this->_getLabelIndex $lblName
     local lblIndex=$this->r
     if [ "$lblIndex" != "" ]; then
-        _this->getLabelDataUsingIndex $lblIndex
+        this->_getLabelDataUsingIndex $lblIndex
         return 0
     else
         _error="Label '$lblName' not found"
@@ -189,15 +215,15 @@ this->setRedrawEveryTime(){
     this->radrawEveryTime=$1
 }
 
-#_this->getLabelIndex(lblName)
-_this->getLabelIndex(){
+#this->_getLabelIndex(lblName)
+this->_getLabelIndex(){
     local toEvaluate="local lblIndex=\$this->labelsNames_$1"
     eval "$toEvaluate"
     eval this->r=$lblIndex
 }
 
 #setLabelUsingIndex(lblname, x, y, text, [prefix], [sufix], [color])
-_this->setLabelUsingIndex(){
+this->_setLabelUsingIndex(){
     local lblIndex=$1
     local lblX=$2
     local lblY=$3
@@ -238,17 +264,17 @@ _this->setLabelUsingIndex(){
     fi
 
     if [ "$this->radrawEveryTime" == 0 ]; then
-        _this->drawLabel $lblIndex
+        this->_drawLabel $lblIndex
         this->setCursorXY $this->defaultX $this->defaultY
     else
-        _this->autoRefresh
+        this->refresh
     fi
 
     return 0
 }
 
 #getLabelDataUsingIndex(lblname, x, y, text, [prefix], [sufix], [color])
-_this->getLabelDataUsingIndex(){
+this->_getLabelDataUsingIndex(){
     local lblIndex=$1
 
     eval "_r->x=\$this->label""$lblIndex""_x"
@@ -263,17 +289,17 @@ _this->getLabelDataUsingIndex(){
 }
 
 
-_this->autoRefresh()
+this->refresh()
 {
     if [ "$lposui_current" == "this" ]; then
         this->forceRepaint
     fi
 }
 
-this->draw(){
+this->_draw(){
     #tput clear
     for i in $(seq 1 $this->labelsCount); do 
-        _this->drawLabel $i
+        this->_drawLabel $i
     done
 
     this->setCursorXY $this->defaultX $this->defaultY
@@ -285,16 +311,19 @@ this->show(){
     this->forceRepaint
 }
 
-this->forceRepaint(){
+this->_forceRepaint(){
     tput clear
     this->draw
 }
 
 #this->drawLabel(labelNumber)
-_this->drawLabel(){
-    local obj="this->label"$1
+this->_drawLabel(){
+    #check if label is valid
+    eval "if [ -z \"\$this->label$1""_text\" ]; then 
+        return
+    fi";
 
-    eval local lblName=\$$obj"_name"
+    local obj="this->label"$1
     eval local lblX=\$$obj"_x"
     eval local lblY=\$$obj"_y"
     eval local lblText=\$$obj"_text"
@@ -324,8 +353,8 @@ _this->drawLabel(){
 
 
     local completeTextWithNoColors="$lblPrefix$lblPasswordText$lblSufix"
-    if [ "$lblColor" != "" ]; then ss
-        local lblPrefix=$lblColorssslblPrefix; 
+    if [ "$lblColor" != "" ]; then 
+        local lblPrefix=$lblColor$lblPrefix; 
         local lblSufix=$lblSufix$lposui_endcolor 
     fi
 
@@ -339,7 +368,7 @@ _this->drawLabel(){
         eval "$obj""_drawLabelCtrl_currentTextSize"=${#completeTextWithNoColors}
     #}
 
-    #echo running _this->setCursorXY $lblX $lblY
+    #echo running this->_setCursorXY $lblX $lblY
     this->setCursorXY $lblX $lblY
     #echo runnint printf "$lblPrefix$lblText$lblSufix"
 
@@ -357,7 +386,7 @@ _this->drawLabel(){
     fi
 }
 
-#_this->setCursorXY(x, y)
+#this->_setCursorXY(x, y)
 this->setCursorXY(){
     tput cup $2 $1
 }

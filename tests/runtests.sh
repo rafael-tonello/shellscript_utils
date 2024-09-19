@@ -12,15 +12,15 @@ this->init(){
 
     autoinit=0; new "utils" this->utils
     
-    echo "initializing tests"
-    new "new.tests.sh" this->newShTests "this->tests"
-    new "sharedmemory.test.sh" this->memoryTests "this->tests"
-    new "thread.test.sh" this->threadTests "this->tests"
-    new "strutils.test.sh" this->utilsTests "this->tests"
-    new "translate.test.sh" this->translateTests "this->tests"
-    new "eventbus.test.sh" this->eventbusTests "this->tests"
-    new "queue.test.sh" this->queueTests "this->tests"
-
+    echo "Finding and initializing tests"
+    testersCount=0
+    for i in $(find . -name "*.test.sh"); do
+        #local fName=$(basename "$i")
+        #new "/$fName" "this->tester_$testersCount" "this->tests"
+        new_f "$i" "this->tester_$testersCount" "this->tests"
+        testersCount=$(( testersCount+1 ))
+    done
+    #new_f "./src.tests/libs.tests/semaphore.test.sh" "asdfads" "this->tests"
 
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
     this->tests->runTests 1
@@ -31,13 +31,11 @@ this->init(){
     #this->tests->showTestResults
     this->tests->showSumarizedTestResults
 
-    this->memoryTests->finalize
-    this->threadTests->finalize
-    this->utilsTests->finalize
-    this->translateTests->finalize
-    this->eventbusTests->finalize
-    this->queueTests->finalize
-    this->tests->finalize
+    while [ $testersCount -eq -1 ]; do
+        testersCount=$(( testersCount-1 ))
+        eval "this->tester_$testersCount->finalize"
+    done
+
     return $errorCount
 }
  

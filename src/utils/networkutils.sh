@@ -8,56 +8,64 @@ if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' f
 #   any other case, the function will return false (!=0)
 #   
 #   errors are returned through "_error" variable
-this->waitRemoteHost(){
-    local host_address=$1
-    timeout=$2
-    local operation=$3
+this->waitRemoteHost(){ local host_address=$1; local timeout=$2; local operation=$3;
     if [ "$timeout" == "" ]; then
         timeout=60
     fi
-    echo 0 > /tmp/this->_operationsucess
-    echo 0 > /tmp/this->_time_to_abort_check_process
-    echo 0 > /tmp/timeout
-    
-    #checkF="sleep $timeout; echo 1 > /tmp/this->_time_to_abort_check_process; echo 1 > /tmp/timeout;"
-    #eval $checkF &
+
+    if [ "$operation" == "" ]; then
+        $operation=1
+    fi
+
+    local file_operationDone=/tmp/netutilssh_operationDone_$RANDOM
+    echo "" > $file_operationDone
+
     (this->checkF(){
-        sleep $timeout; 
-        echo 1 > /tmp/this->_time_to_abort_check_process; 
-        echo 1 > /tmp/timeout;
+        local start=$(date +%s)
+        while [ $(( $(date +%s) - $start )) -lt $timeout ]; do
+            tmp=$(cat $file_operationDone)
+            if [ "$tmp" != "" ]; then
+                return 0
+            fi
+
+            sleep 0.75
+        done
+
+        echo "timeout" > $file_operationDone; 
     }; this->checkF &)
 
     while [ true  ]; do
-        ping -c 1 $host_address -W 5 -w 5 >/dev/null
+
+    
+        ping -c 1 $host_address -W 2 -w 2 >/dev/null 2>&1
         local _rc=$?
+
+
         if [ "$_rc" == "0" ] && [ "$operation" == "1" ]; then
-            echo 1 > /tmp/this->_operationsucess
-            echo 1 > /tmp/this->_time_to_abort_check_process
+            echo "sucess" > $file_operationDone
         fi;
 
         if [ "$_rc" != "0" ] && [ "$operation" == "0" ]; then
-            echo 1 > /tmp/this->_operationsucess
-            echo 1 > /tmp/this->_time_to_abort_check_process
+            echo "sucess" > $file_operationDone
         fi;
 
-        
-        
-
-        tmp=$(cat /tmp/this->_time_to_abort_check_process)
-        if [ "$tmp" == "1" ]; then
+        tmp=$(cat $file_operationDone)
+        if [ "$tmp" != "" ]; then
             break
         fi
-        
         sleep 1
     done
 
-    tmp=$(cat /tmp/this->_operationsucess)
-    if [ "$tmp" == "1" ]; then
+    tmp=$(cat $file_operationDone)
+    if [ "$tmp" == "sucess" ]; then
         return 0;
+    elif [ "$tmp" == "timeout" ]; then
+        _error="Timeout of $timeout seconds reached"
+        return 1
+    else
+        _error="Unknown error"
+        return 1
     fi
-
-    _error="Timeout of $timeout seconds reached"
-    return 1
 }
 
 #wait_waitRemoteHostBeOn(host_address, timeout_seconds)

@@ -128,6 +128,9 @@ this->putAfter(){ local previousElementId=$1;
     this->currentCount=$(( this->currentCount+1 ))
     return 0
 }
+pushAfter(){
+    this->putAfter "$@"
+}
 
 #insert an element before another element in the list
 #argument nextElementId: the id of the next element (the new element will be put before this one)
@@ -147,7 +150,9 @@ this->putBefore(){ local nextElementId="$1"; local newElementData="$2"
     this->putAfter "$previousElement" "$@"
     return $?
 }
-
+pushBefore(){
+    this->putBefore "$@"
+}
 
 #returns te data array of an element
 #argument id: the id of the desired element
@@ -178,16 +183,13 @@ this->get(){
 #removes an element of the list
 #argument id: the id of the element to be removed
 #result _error: _error will store a error message if something goes wrong 
-this->remove(){
+this->remove(){ local elementId=$1
     _error=""
 
     if [ "$1" == "" ]; then
         _error="You must provide an element id"
         return 1
     fi
-
-    local elementId=$1
-
 
     local prevElementId=""
     local nextElementId=""
@@ -327,6 +329,22 @@ this->getByIndex(){ local index=$1
     return 1
 }
 
+#returns a new list object
+this->filter(){
+    echo "not implemented yet"
+}
+
+#returns a new list object
+this->map(){
+    echo "not implemented yet"
+}
+
+this->reduce(){
+    echo "not implemented yet"
+}
+
+#updates the data of an element
+#receives the element id and a variable number of arguments that will be the new data
 this->update(){ local id=$1
     #erase old data
     eval "local dataCount=\$$id""->dataCount"

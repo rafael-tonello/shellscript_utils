@@ -125,9 +125,8 @@ this->runTests(){ local _additionalInfoOnFailures_=$1
 
                 if [ ! -z "$_expected" ]; then
                     echo "  Expected: $_expected"
-                fi
-
-                if [ ! -z "$_returned" ]; then
+                    echo "  Returned: $_returned"
+                elif [ ! -z "$_returned" ]; then
                     echo "  Returned: $_returned"
                 fi
             fi;

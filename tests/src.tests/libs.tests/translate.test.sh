@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#test the sharedmemory.sh file
+#test the translate.sh file
 
 this->scriptLocation=$3
 this->init(){ testsObject=$1;
