@@ -1,6 +1,31 @@
 #!/bin/vash
 
-#strem class
+#stream class
+#
+#!! the main difference between this file and the eventbus is that the event stream (this class) will sent data to all observers, while
+# the event bus is used to observe specific events. This class is more focused to create events in your modules.
+#
+## Usage example:
+##    file MyClass.sh
+##        this->ini(){
+##            new "eventstream" this->onStartWork
+##            new "eventstream" this->onFinishWork
+##        }
+##    
+##        this->work(){
+##            this->onStartWork->emit "work started"
+##            #do the work
+##            #do the work
+##            this->onFinishWork->emit "work finished"
+##    
+##        }
+##    
+##    file main.sh
+##        new "MyClass" myClass
+##        myClass->onStartWork->listen "echo 'work started'"
+##        myClass->onFinishWork->listen "echo 'work finished'"
+##    
+##        myClass->work
 
 this->init(){
     #declare an assotiative array to store the observers
@@ -8,7 +33,7 @@ this->init(){
     this->currenId=0
 }
 
-#subscribe the stream. 
+#subscribe the stream. When data is published, the callback will be called
 #arguments: 
 #   callback/lambda function
 #return _r: returns the observation ID through the variable '_r'
@@ -34,7 +59,7 @@ this->unsubscribe(){
     unset this->observers[$1]
 }
 
-#stream data for all 
+#stream data for all observers
 #arguments:
 #   data
 this->publish(){

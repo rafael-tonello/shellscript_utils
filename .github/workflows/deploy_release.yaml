@@ -9,7 +9,7 @@ on:
 jobs: 
   prepare-release:
     name: Deploy release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions: write-all
     steps:
       - name: Checkout code
@@ -17,6 +17,14 @@ jobs:
 
       - name: Install dependencies
         run: |
+          #check if sudo is installed
+          if ! [ -x "$(command -v sudo)" ]; then
+            echo "sudo is not installed. Installing sudo..."
+            apt update -y > /dev/null 2>&1
+            apt install sudo -y
+            sudo apt update -y
+            sudo apt install -y bc
+          fi          
           sudo apt update -y
           sudo apt install -y bc
 

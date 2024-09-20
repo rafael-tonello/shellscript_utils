@@ -24,6 +24,19 @@ this->init(){
     this->currentCount=0
 }
 
+this->finalize(){
+    this->forEach "__f(){
+        local id=\"\$1\"
+        this->remove \"\$id\"
+    }; __f" 1
+
+    this->idCount=0
+    this->firstId=""
+    this->lastId=""
+
+    this->currentCount=0
+}
+
 this->pushBack(){
     this->putAfter "$this->lastId" "$@"
     return $?
@@ -34,7 +47,8 @@ this->back(){
 }
 
 this->getBack(){
-    return $this->back
+    this->back
+    return $?
 }
 
 this->removeBack(){
@@ -55,7 +69,8 @@ this->front(){
 }
 
 this->getFront(){
-    return $this->front
+    this->front
+    return $?
 }
 
 this->removeFront(){
@@ -128,6 +143,9 @@ this->putAfter(){ local previousElementId=$1;
     this->currentCount=$(( this->currentCount+1 ))
     return 0
 }
+pushAfter(){
+    this->putAfter "$@"
+}
 
 #insert an element before another element in the list
 #argument nextElementId: the id of the next element (the new element will be put before this one)
@@ -147,14 +165,16 @@ this->putBefore(){ local nextElementId="$1"; local newElementData="$2"
     this->putAfter "$previousElement" "$@"
     return $?
 }
-
+pushBefore(){
+    this->putBefore "$@"
+}
 
 #returns te data array of an element
 #argument id: the id of the desired element
 #result _r: _r will receive the amout of data elements
-#result _r_0, _r_1, _r_2, ...: each _r_i will receive the data element
+#result _r_0, _r_1, _r_2, ...: each _r_i will receive the data element. Warning: the first element is r_0, not r_1 (like bash arrays, that starts in 1)
 #result _error: _error will store a error message if something goes wrong 
-this->get(){
+this->get(){ local elementId="$1";
     _r=0
     _error=""
 
@@ -163,31 +183,33 @@ this->get(){
         return 1
     fi
 
+    #get variables starting with '$elementId' (use compgen)
     eval "local dataCount=\$$1""->dataCount"
-    _r=dataCount
+
+    _r="$dataCount"
+    _r->size="$dataCount"
+    _r->count="$dataCount"
+    _r->length="$dataCount"
     if [ "$_r" == "" ]; then
         _error="Element not found"
         return 1
     fi
 
     for i in $(seq 0 $(( dataCount-1 ))); do
-        eval "_r_$i=\"\$$1""->data_$i\""
+        eval "_r->$i=\"\$$1""->data->$i\""
     done
 }
 
 #removes an element of the list
 #argument id: the id of the element to be removed
 #result _error: _error will store a error message if something goes wrong 
-this->remove(){
+this->remove(){ local elementId=$1
     _error=""
 
     if [ "$1" == "" ]; then
         _error="You must provide an element id"
         return 1
     fi
-
-    local elementId=$1
-
 
     local prevElementId=""
     local nextElementId=""
@@ -207,9 +229,10 @@ this->remove(){
         this->lastId="$prevElementId"
     fi
 
-    eval "local dataCount=\$$elementId""->dataCount"
-    for i in $(seq 0 $(( dataCount-1 ))); do
-        eval "unset $elementId""->data_$i"
+
+    local parentProperties=$(compgen -A variable | grep "^$elementId""_")
+    for i in $parentProperties; do
+        eval "unset $i"
     done
 
     unset $elementId
@@ -223,7 +246,7 @@ this->remove(){
 
 #remove an element from the list and return its data (call 'get' and 'remove' in sequence). You should provide the elementId
 #argument id: the id of the element
-#result _r: _r will hold the element value
+#result _r: _r will hold the element data
 #result _error: _error will recieve an error description if some one happes
 this->pop(){
     _error=""
@@ -260,6 +283,7 @@ this->forEach(){ local this_callback="$1"; local _firstArgAsId_="$2"
         eval "dataCount=\$$currentElementId""->dataCount"
         for i in $(seq 0 $(( dataCount-1 ))); do
             eval "local tmpData=\"\\\$$currentElementId""->data_$i\""
+            #eval "local tmpData=\"\$$currentElementId""->data_$i\""
             argumentList="$argumentList \"$tmpData\""
         done
 
@@ -269,6 +293,7 @@ this->forEach(){ local this_callback="$1"; local _firstArgAsId_="$2"
         else
             eval "$this_callback $argumentList"
         fi
+
         eval "currentElementId=\"\$tmpNextElementId\""
     done
 }
@@ -308,7 +333,9 @@ this->size(){
     echo $this->currentCount
     _r=$this->currentCount
 }
+this->getSize(){ this->size; }
 
+#get usin index. The counting of indexes is made from front of the list to its back
 this->getByIndex(){ local index=$1
     local currentElementId=$this->firstId
     local currentIndex=0
@@ -327,6 +354,22 @@ this->getByIndex(){ local index=$1
     return 1
 }
 
+#returns a new list object
+this->filter(){
+    echo "not implemented yet"
+}
+
+#returns a new list object
+this->map(){
+    echo "not implemented yet"
+}
+
+this->reduce(){
+    echo "not implemented yet"
+}
+
+#updates the data of an element
+#receives the element id and a variable number of arguments that will be the new data
 this->update(){ local id=$1
     #erase old data
     eval "local dataCount=\$$id""->dataCount"

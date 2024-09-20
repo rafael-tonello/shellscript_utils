@@ -9,12 +9,20 @@ on:
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Install dependencies
         run: |
+          #check if sudo is installed
+          if ! [ -x "$(command -v sudo)" ]; then
+            echo "sudo is not installed. Installing sudo..."
+            apt update -y > /dev/null 2>&1
+            apt install sudo -y
+            sudo apt update -y
+          fi
           sudo apt update -y
           sudo apt install -y bc
+          sudo apt install -y python3
 
       - name: Checkout code
         uses: actions/checkout@v2

@@ -4,7 +4,7 @@
 
 this->scriptLocation=$3
 this->init(){ testsObject=$1;
-    new_f $this->scriptLocation"/../../src/libs/sharedmemory.sh" this->memory $("$testsObject"->getNamespace)
+    new "libs/sharedmemory.sh" this->memory $("$testsObject"->getNamespace)
     #you can use the object passe by parameters or instantiate a new instance (in this case, 
     #the namespace should be the same as the one used in the tests.sh file)
     #new_f $this->scriptLocation"/../../../tests.sh" this->tests "tests"
@@ -73,7 +73,7 @@ this->testLockUnLock(){
     new "sharedmemory" memory "tests_testLockUnLock"
     memory->lockVar "testvar"
     #check if the file [memory->sharedMemoryDir]/[testvar] exists
-    if [ ! -f "$memory->sharedMemoryDir/testvar.lock" ]; then
+    if [ ! -d "$memory->sharedMemoryDir/testvar.lock" ]; then
         _error="lockVar did not lock the file"
         memory->finalize 1
         return 1

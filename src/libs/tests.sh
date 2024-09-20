@@ -83,7 +83,7 @@ this->registerTest(){ local testName=$1; local testFunction=$2;
 
 #run all tests registered by the registerTest function. For each test, the result is 
 #registered by the setTestResult function. Returns the error count
-this->runTests(){
+this->runTests(){ local _additionalInfoOnFailures_=$1
     local count=$(this->vars->getVar "__tests.count")
     local errorCount=0
     for i in $(seq 0 $((count-1))); do
@@ -116,6 +116,21 @@ this->runTests(){
             fi
             this->utils->makeupPrint ": $_error" "red"
             printf "\n"
+
+            if [ ! -z "$_additionalInfoOnFailures_" ]; then
+                printf "  Error code: $errorCode\n"
+                if [ ! -z "$_message" ]; then
+                    echo "  Message: $message"
+                fi
+
+                if [ ! -z "$_expected" ]; then
+                    echo "  Expected: $_expected"
+                    echo "  Returned: $_returned"
+                elif [ ! -z "$_returned" ]; then
+                    echo "  Returned: $_returned"
+                fi
+            fi;
+
             errorCount=$((errorCount+1))
         fi
 
@@ -146,10 +161,10 @@ this->showTestResults(){
         local returned=$(this->vars->getVar "__tests.$i.returned")
         local errorMessage=$(this->vars->getVar "__tests.$i.errorMessage")
 
-        printf "[ Test: $testName ]\n"
+        echo "[ Test: $testName ]"
 
         if [ ! -z "$message" ]; then
-            printf "  Message: $message\n"
+            echo "  Message: $message"
         fi
 
         if [ "$resultCode" -eq "0" ]; then
@@ -159,11 +174,11 @@ this->showTestResults(){
         fi
 
         if [ ! -z "$expected" ]; then
-            printf "  Expected: $expected\n"
+            echo "  Expected: $expected"
         fi
 
         if [ ! -z "$returned" ]; then
-            printf "  Returned: $returned\n"
+            echo "  Returned: $returned"
         fi
 
         if [ ! -z "$errorMessage" ]; then

@@ -91,6 +91,63 @@ this->uploadFile(){
     return $?
 }
 
+#remote_origin, remote_destination, #progresscallback. This function runs with subshell and uses 'script' instead sshpass
+this->uploadFileWithProgress(){
+    local origin="$1"
+    local dest="$2"
+    local callback="$3"
+
+    this->runCmd "mkdir -p '$dest'"
+
+    local progressFile="/tmp/$RANDOM$(date +%s)"
+    local doneFile="/tmp/$RANDOM$(date +%s)"
+
+    echo "" > $doneFile
+
+    (__f(){
+        local lastScpData=""
+        local scpdata=""
+        while [ true ]; do
+            scpdata=$(tail -n1 $progressFile)
+            
+            scpdata=$(echo -n "$scpdata" | grep -o '[^ ]*%')
+            scpdata=$(echo -n "$scpdata" | sed 's/%//')
+
+            scpdata=$(echo $scpdata | sed 's/\r//')
+            scpdata=$(echo $scpdata | sed 's/.*[[:space:]]\([^[:space:]]*\)/\1/')
+            
+            if [ "$lastScpData" != "$scpdata" ]; then
+                eval "$callback \"$scpdata\""
+            fi;
+
+            lastScpData=$scpdata
+            sleep 0.25
+
+            local doneState=$(cat $doneFile)
+            if [ "$doneState" == "stop" ]; then
+                eval "$callback \"100\""
+                echo "stopped" > $doneFile
+                break
+            fi
+
+            scpdata=""
+        done
+    }; __f &)
+
+    { sleep 2; echo $this->password; } | script -q /dev/null -c "/usr/bin/scp \"$origin\" $this->username@$this->host:\"$dest\"" > $progressFile
+    local retCode=$?
+    
+    echo "stop"> $doneFile
+    while [ true ]; do
+        local doneState=$(cat $doneFile)
+        if [ "$doneState" == "stopped" ]; then
+            break;
+        fi
+        sleep 0.25
+    done
+
+    return $retCod
+}
 
 #_this_get_onlye(source, [valid_chars])
 _this_get_only(){

@@ -8,6 +8,8 @@ this->init(){ testsObject=$1;
     "$testsObject"->registerTest "strutils: getOnly_2 should return only valid chars" "this->getOnly_2"
     "$testsObject"->registerTest "strutils: replace should replace all ocurrences of a string" "this->testReplace"
     "$testsObject"->registerTest "strutils: replace_2 should replace all ocurrences of a string" "this->replace_2"
+    "$testsObject"->registerTest "strutils: replaceSeq should replace all placeholds with a string" "this->testReplaceSeq"
+    "$testsObject"->registerTest "strutils: replaceSeq_2 should replace all placeholders with a string" "this->testReplaceSeq_2"
     "$testsObject"->registerTest "strutils: cut should return the first part of a string" "this->cut"
     "$testsObject"->registerTest "strutils: cut_2 should return the first part of a string" "this->cut_2"
 }
@@ -48,9 +50,14 @@ this->getOnly_2(){
 #example: replace "%%" "the key is %% and key is %%" "key" "value" -> "the key is key and key is value
 this->testReplace(){ 
     autoinit=0; new "strutils" su
-    local result=$(su->replace "%%" "the key is %% and key is %%" "key" "value")
-    if [ "$result" != "the key is key and key is value" ]; then
-        _error="replace did not return the expected result"
+    local desired="normal word, replaced word, normal word, replaced word"
+    
+    local result=$(su->replace "normal word, %%, normal word, %%" "%%" "replaced word")
+
+    if [ "$result" != "$desired" ]; then
+        _error="replace did not return the expected result. Expected: $desired, got: $result"tashed changes
+        _expected="$desired"
+        _returned="$result"
         return 1
     fi
     return 0
@@ -59,15 +66,44 @@ this->testReplace(){
 #use echo instead _r
 this->replace_2(){
     autoinit=0; new "strutils" su
-    su->replace_2 "%%" "the key is %% and key is %%" "key" "value"
+
+    local desired="normal word, replaced word, normal word, replaced word"
+    su->replace_2 "normal word, %%, normal word, %%" "%%" "replaced word"
     result=$_r
-    if [ "$result" != "the key is key and key is value" ]; then
-        _error="replace did not return the expected result"
+
+    if [ "$result" != "$desired" ]; then
+        _error="replace_2 did not return the expected result. Expected: $desired, got: $result"
+        _expected="$desired"
+        _returned="$result"
         return 1
     fi
     return 0
 }
 
+this->testReplaceSeq(){ 
+    autoinit=0; new "strutils" su
+    local expected="the key is key and key is value"
+    local result=$(su->replaceSeq "%%" "the key is %% and key is %%" "key" "value")
+
+    if [ "$result" != "$expected" ]; then
+        _error="replaceSeq did not return the expected result. Expected: $expected, got: $result"Stashed changes
+        return 1
+    fi
+    return 0
+}
+
+this->testReplaceSeq_2(){ 
+    autoinit=0; new "strutils" su
+    local expected="the key is key and key is value"
+    su->replaceSeq_2 "%%" "the key is %% and key is %%" "key" "value"
+    result=$_r
+
+    if [ "$result" != "$expected" ]; then
+        _error="replaceSeq_2 did not return the expected result. Expected: $expected, got: $result"
+        return 1
+    fi
+    return 0
+}
 
 this->cut(){ 
     #local source=$1; local separator=$2; local p1_p2=$3

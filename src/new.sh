@@ -22,6 +22,9 @@ project_dir=$1
 ctx=""
 context=""
 autoinit=""
+
+#new_f_id_count is used by new_f function to create a new name for the object if the name is not provided
+new_f_id_count=0
 #new object from a class in a [fileName].sh file
 #arguments:
 #   normal args:
@@ -37,6 +40,15 @@ new_f()
     local fileName="$1"
     local name="$2"
     local thiskey="this"
+
+    #if name was not provided, create a new name
+    if [ "$name" == "" ]; then
+        name="anom_obj_$new_f_id_count"
+        new_f_id_count=$((new_f_id_count + 1))
+        #add a random number to the name
+        name="$name""_$(date +%s)""_$RANDOM"
+        _r="$name"5-=
+    fi
 
     if [ "$ctx" != "" ]; then
         thiskey="$ctx"
@@ -191,21 +203,48 @@ inherit_f(){ local parentClassFile=$1; local childObjectName=$2; lcoal _this_key
     local parentClassName=$(basename "$parentClassFile")
     parentClassName="${parentClassName%.*}"
 
-    _replaceMethodObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
-    
+    _replaceMethodsAndVarsWithObjectName "$childObjectName" "$childObjectName""_""$parentClassName"    
 }
 
 inherit(){ local parentClassName=$1; local childObjectName=$2; local _this_key_=$3
 
     autoinit=0; new "$parentClassName" "$childObjectName" "$_this_key_"
 
-    local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
+    #local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
 
-    _replaceMethodObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+    _replaceMethodsAndVarsWithObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
 
 }
 
-_replaceMethodObjectName(){ local objectName=$1; local newObjectName=$2
+finalize(){ local objectName="$1"; local _callFinalizeMethod_def1="$2"
+    if [ "$_callFinalizeMethod_def1" == "" ]; then
+        _callFinalizeMethod_def1=1
+    fi
+
+    if [ "$_callFinalizeMethod_def1" == "1" ] || [ "$_callFinalizeMethod_def1" == "true" ]; then
+        shift
+        shift
+        eval "$objectName""_finalize" "new.sh" "$@"
+    fi
+
+    #unset all variables started with '$objectName'
+    local objVars=$(compgen -A variable | grep "^$objectName")
+    for i in $objVars; do
+        #eval "$i=\"\""
+        eval "unset $i"
+    done
+
+    #unset all functions started with '$objectName'
+    local objFuncs=$(compgen -A function | grep "^$objectName""_")
+    for i in $objFuncs; do
+        #eval "$i(){ :; }"
+        unset -f $i
+    done
+}
+destroy(){ finalize "$@"; }
+freeObject(){ finalize "$@"; }
+
+_replaceMethodsAndVarsWithObjectName(){ local objectName=$1; local newObjectName=$2
     
     local parentFuncs=$(compgen -A function | grep "^$objectName""_")
 
@@ -222,6 +261,20 @@ _replaceMethodObjectName(){ local objectName=$1; local newObjectName=$2
         eval "$funcCode"
     done
 
+    local parentProperties=$(compgen -A variable | grep "^$objectName""_")
+
+    #copy all properties from new object to 'childObjectName_base' object
+    for i in $parentProperties; do
+        #get the original property value and create a new property
+        local propValue=$(eval "echo \$$i")
+
+        #replace '$childObjectName' in the property name by "$childObjectName""_base" (replace only the first ocurrence)
+        #propValue=$(echo "$propValue" | sed "s/$objectName""_/$newObjectName""_/")
+        propValue=$(echo "$propValue" | sed "0,/$objectName""_/{s//$newObjectName""_/}")
+
+        #create the new property
+        eval "$i=\"$propValue\""
+    done
 }
 
 #recursive scan .sh files
@@ -294,8 +347,9 @@ else
 fi
 
 
-import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
-    local cacheFolder="$project_dir/.newshgitrepos"
+#import a repository to your project. After the import, you can call new with the repository class names
+import_git(){ local gitUrl=$1; local _global_=$2; local _commit_=$3
+    local cacheFolder="$project_dir/.shellscript_utils/newshgitrepos"
     
 
     if [ "$_commit_" == "" ]; then
@@ -303,8 +357,8 @@ import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
 
     fi
     
-    if [ "$_portable_" == "1" ]; then
-        cacheFolder="$HOME/.newshgitrepos"
+    if [ "$_global_" == "1" ]; then
+        cacheFolder="$HOME/.shellscript_utils/newshgitrepos"
     fi
 
     if [ ! -d "$cacheFolder" ]; then
@@ -331,6 +385,59 @@ import_git(){ local gitUrl=$1; local _portable_=$2; local _commit_=$3
 
     scan_folder_for_classes "$gitFolder"
     return 0
+}
+
+#import a files from the internet. After the import, you can do a 'new' in the imported file
+import_webFile(){ local fileUrl=$1; local _global_=$2;
+    #get urlBase after ://
+    local protoFileName=$(echo $fileUrl | sed 's/.*:\/\///')
+
+    #fix the protoFileName to be a valid filename
+    protoFileName=$(fixname "$protoFileName" "abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_./")
+
+    #get the directory name
+    #local protoFileFolder=$(dirname $urlBase)
+
+    local cacheFolder="$project_dir/.shellscript_utils/webfiles/"
+
+    if [ "$_global_" == "1" ]; then
+        cacheFolder="$HOME/.shellscript_utils/webfiles/"
+    fi
+
+    local filename=$cacheFolder$protoFileName
+    local folder=$(dirname $filename)
+
+    if [ ! -d "$folder" ]; then
+        mkdir -p "$folder"
+    fi
+
+    #try download the file
+    if command -v curl &> /dev/null; then
+        curl -s "$fileUrl" > "$filename"".tmp"
+    elif command -v wget &> /dev/null; then
+        wget -q "$fileUrl" -O "$filename"".tmp"
+    else
+        >&2 echo "You need to have 'curl' or 'wget' installed to download the file"
+        return 1
+    fi
+
+    #check if command was executed with sucess
+    if [ "$?" != "0" ]; then
+        >&2 echo "Error downloading file"
+        return 1
+    fi
+
+    #if downloaded with sucess, replace the original file (if exists) withe the .tmp file
+    if [ -f "$filename" ]; then
+        rm -f "$filename" 2>/dev/null
+    fi
+    mv "$filename"".tmp" "$filename"
+
+    return 0
+
+    scan_folder_for_classes "$folder"
+
+    _r="$filename"
 }
 
 displaysObjecMemory(){

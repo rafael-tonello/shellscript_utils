@@ -1,6 +1,7 @@
 if [ "$1" != "new" ]; then
-    source ../src/new.sh "../src"
+    source ../src/new.sh "$(pwd)"
     scan_folder_for_classes ".."
+    scan_folder_for_classes "."
     new_f "$0" __app__
     exit $?
 fi
@@ -11,18 +12,19 @@ this->init(){
 
     autoinit=0; new "utils" this->utils
     
-    echo "initializing tests"
-    new_f "./src.tests/sharedmemory.test.sh" this->memoryTests "this->tests"
-    new_f "./src.tests/thread.test.sh" this->threadTests "this->tests"
-    new_f "./src.tests/utils.tests/strutils.test.sh" this->utilsTests "this->tests"
-    new_f "./src.tests/libs.tests/translate.test.sh" this->translateTests "this->tests"
-    new_f "./src.tests/libs.tests/eventbus.test.sh" this->eventbusTests "this->tests"
-    new_f "./src.tests/queue.test.sh" this->queueTests "this->tests"
-    echo 4
 
+    echo "Finding and initializing tests"
+    testersCount=0
+    for i in $(find . -name "*.test.sh"); do
+        #local fName=$(basename "$i")
+        #new "/$fName" "this->tester_$testersCount" "this->tests"
+        new_f "$i" "this->tester_$testersCount" "this->tests"
+        testersCount=$(( testersCount+1 ))
+    done
+    #new_f "./src.tests/libs.tests/list.test.sh" "asdfads" "this->tests"
 
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
-    this->tests->runTests
+    this->tests->runTests 1
     errorCount=$?
 
     echo ""
@@ -30,13 +32,12 @@ this->init(){
     #this->tests->showTestResults
     this->tests->showSumarizedTestResults
 
-    this->memoryTests->finalize
-    this->threadTests->finalize
-    this->utilsTests->finalize
-    this->translateTests->finalize
-    this->eventbusTests->finalize
-    this->queueTests->finalize
-    this->tests->finalize
+
+    while [ $testersCount -eq -1 ]; do
+        testersCount=$(( testersCount-1 ))
+        eval "this->tester_$testersCount->finalize"
+    done
+
     return $errorCount
 }
  
