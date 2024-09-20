@@ -93,6 +93,7 @@ this->_tryDownloadPkv(){ local allowInstalations=1;
     #extract pkv
     tar -xzf "$SKVS_PKV_TMP_FOLDER/pkv.tar.gz" -C "$SKVS_PKV_TMP_FOLDER"
 
+    mkdir -p $SKVS_DEFAULT_BIN_LOCATION > /dev/null 2>&1
     cp "$SKVS_PKV_TMP_FOLDER/PrefixTreeStorage-v1.0.0/command/pkv" $SKVS_DEFAULT_BIN_LOCATION/
 
     echo "$SKVS_DEFAULT_BIN_LOCATION/pkv"

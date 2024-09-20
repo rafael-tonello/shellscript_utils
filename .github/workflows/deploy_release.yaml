@@ -22,11 +22,9 @@ jobs:
             echo "sudo is not installed. Installing sudo..."
             apt update -y > /dev/null 2>&1
             apt install sudo -y
-            sudo apt update -y
-            sudo apt install -y bc
           fi          
           sudo apt update -y
-          sudo apt install -y bc
+          sudo apt install -y bc curl
 
       - name: Running tests
         run: |

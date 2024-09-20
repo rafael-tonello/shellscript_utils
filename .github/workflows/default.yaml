@@ -21,8 +21,7 @@ jobs:
             sudo apt update -y
           fi
           sudo apt update -y
-          sudo apt install -y bc
-          sudo apt install -y python3
+          sudo apt install -y bc curl
 
       - name: Checkout code
         uses: actions/checkout@v2
