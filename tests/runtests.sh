@@ -20,7 +20,7 @@ this->init(){
         new_f "$i" "this->tester_$testersCount" "this->tests"
         testersCount=$(( testersCount+1 ))
     done
-    #new_f "./src.tests/libs.tests/semaphore.test.sh" "asdfads" "this->tests"
+    #new_f "./src.tests/libs.tests/list.test.sh" "asdfads" "this->tests"
 
     this->utils->printHorizontalLine " [ running tests ] " "=" 2>/dev/null
     this->tests->runTests 1

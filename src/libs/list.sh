@@ -24,6 +24,19 @@ this->init(){
     this->currentCount=0
 }
 
+this->finalize(){
+    this->forEach "__f(){
+        local id=\"\$1\"
+        this->remove \"\$id\"
+    }; __f" 1
+
+    this->idCount=0
+    this->firstId=""
+    this->lastId=""
+
+    this->currentCount=0
+}
+
 this->pushBack(){
     this->putAfter "$this->lastId" "$@"
     return $?
@@ -34,7 +47,8 @@ this->back(){
 }
 
 this->getBack(){
-    return $this->back
+    this->back
+    return $?
 }
 
 this->removeBack(){
@@ -55,7 +69,8 @@ this->front(){
 }
 
 this->getFront(){
-    return $this->front
+    this->front
+    return $?
 }
 
 this->removeFront(){
@@ -157,9 +172,9 @@ pushBefore(){
 #returns te data array of an element
 #argument id: the id of the desired element
 #result _r: _r will receive the amout of data elements
-#result _r_0, _r_1, _r_2, ...: each _r_i will receive the data element
+#result _r_0, _r_1, _r_2, ...: each _r_i will receive the data element. Warning: the first element is r_0, not r_1 (like bash arrays, that starts in 1)
 #result _error: _error will store a error message if something goes wrong 
-this->get(){
+this->get(){ local elementId="$1";
     _r=0
     _error=""
 
@@ -168,15 +183,20 @@ this->get(){
         return 1
     fi
 
+    #get variables starting with '$elementId' (use compgen)
     eval "local dataCount=\$$1""->dataCount"
-    _r=dataCount
+
+    _r="$dataCount"
+    _r->size="$dataCount"
+    _r->count="$dataCount"
+    _r->length="$dataCount"
     if [ "$_r" == "" ]; then
         _error="Element not found"
         return 1
     fi
 
     for i in $(seq 0 $(( dataCount-1 ))); do
-        eval "_r_$i=\"\$$1""->data_$i\""
+        eval "_r->$i=\"\$$1""->data->$i\""
     done
 }
 
@@ -209,9 +229,14 @@ this->remove(){ local elementId=$1
         this->lastId="$prevElementId"
     fi
 
-    eval "local dataCount=\$$elementId""->dataCount"
-    for i in $(seq 0 $(( dataCount-1 ))); do
-        eval "unset $elementId""->data_$i"
+    #eval "local dataCount=\$$elementId""->dataCount"
+    #for i in $(seq 0 $(( dataCount-1 ))); do
+    #    eval "unset $elementId""->data_$i"
+    #done
+
+    local parentProperties=$(compgen -A variable | grep "^$elementId""_")
+    for i in $parentProperties; do
+        eval "unset $i"
     done
 
     unset $elementId
@@ -225,7 +250,7 @@ this->remove(){ local elementId=$1
 
 #remove an element from the list and return its data (call 'get' and 'remove' in sequence). You should provide the elementId
 #argument id: the id of the element
-#result _r: _r will hold the element value
+#result _r: _r will hold the element data
 #result _error: _error will recieve an error description if some one happes
 this->pop(){
     _error=""
@@ -262,6 +287,7 @@ this->forEach(){ local this_callback="$1"; local _firstArgAsId_="$2"
         eval "dataCount=\$$currentElementId""->dataCount"
         for i in $(seq 0 $(( dataCount-1 ))); do
             eval "local tmpData=\"\\\$$currentElementId""->data_$i\""
+            #eval "local tmpData=\"\$$currentElementId""->data_$i\""
             argumentList="$argumentList \"$tmpData\""
         done
 
@@ -271,6 +297,7 @@ this->forEach(){ local this_callback="$1"; local _firstArgAsId_="$2"
         else
             eval "$this_callback $argumentList"
         fi
+
         eval "currentElementId=\"\$tmpNextElementId\""
     done
 }
@@ -306,11 +333,14 @@ this->displaysMemory(){
     displaysObjecMemory "$this->name"
 }
 
+
 this->size(){
     echo $this->currentCount
     _r=$this->currentCount
 }
+this->getSize(){ this->size; }
 
+#get usin index. The counting of indexes is made from front of the list to its back
 this->getByIndex(){ local index=$1
     local currentElementId=$this->firstId
     local currentIndex=0
