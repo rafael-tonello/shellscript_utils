@@ -5,7 +5,7 @@
 this->init(){ testsObject=$1;
     "$testsObject"->registerTest "List~>push: should add items in the front" "this->testPushFront"
     "$testsObject"->registerTest "List~>pushBack: should add items in the back" "this->testPushBack"
-    "$testsObject"->registerTest "List~>get: gets an element using its index (do not remove)" "this->testGetByIndex"
+    "$testsObject"->registerTest "List~>getByIndex: gets an element using its index (do not remove)" "this->testGetByIndex"
     "$testsObject"->registerTest "List~>get: gets an element using its id (do not remove)" "this->testGet"
     "$testsObject"->registerTest "List~>putAfter: should put items after another one" "this->testPutAfter"
     "$testsObject"->registerTest "List~>putBefore: should put items before another one" "this->testPutBefore"
@@ -76,7 +76,7 @@ this->testGetByIndex(){
     local id6=$_r
 
     list->getByIndex "3"
-    local dataCount="$_r"
+    local dataCount="${#_r[@]}"
 
     if [ "$dataCount" != "1" ]; then
         _error="getByIndex failed. Get returned an invalid data count"
@@ -85,7 +85,7 @@ this->testGetByIndex(){
         return 1
     fi
 
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     if [ "$theData" != "44444" ]; then
         _error="getByIndex failed. Get returned an invalid data"
         _expected="44444"
@@ -106,7 +106,7 @@ this->testGet(){
     local id3=$_r
 
     list->get "$id2"
-    local dataCount="$_r"
+    local dataCount="${#_r[@]}"
 
     if [ "$dataCount" != "1" ]; then
         _error="get failed. Get returned an invalid data count"
@@ -115,7 +115,7 @@ this->testGet(){
         return 1
     fi
 
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     if [ "$theData" != "22222" ]; then
         _error="get failed. Get returned an invalid data"
         _expected="22222"
@@ -144,9 +144,9 @@ this->testPutAfter(){
     list->putAfter "$id3" "77777"
 
     list->getByIndex "3"
-    local dataCount="$_r"
+    local dataCount="${#_r[@]}"
 
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     if [ "$theData" != "77777" ]; then
         _error="putAfter failed. Get returned an invalid data"
         _expected="77777"
@@ -176,7 +176,7 @@ this->testPutBefore(){
 
     list->getByIndex "2"
 
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     if [ "$theData" != "77777" ]; then
         _error="putBefore failed. Get returned an invalid data"
         _expected="77777"
@@ -205,9 +205,8 @@ this->testUpdate(){
     list->update "$id3" "88888"
 
     list->get "$id3"
-    local dataCount="$_r"
 
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     if [ "$theData" != "88888" ]; then
         _error="update failed. Get returned an invalid data"
         _expected="88888"
@@ -261,7 +260,7 @@ this->getFront(){
     local id6=$_r
 
     list->getFront
-    local theData="$_r->0"
+    local theData="${_r[1]}"
 
     if [ "$theData" != "11111" ]; then
         _error="getFront returned an invalid data"
@@ -272,7 +271,7 @@ this->getFront(){
 
     #repeat the getFront call. Result should be the same
     list->getFront
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     if [ "$theData" != "11111" ]; then
         _error="getFront removed the first element"
         _expected="11111"
@@ -308,7 +307,7 @@ this->getBack(){
     local id6=$_r
 
     list->getBack
-    local theData="$_r->0"
+    local theData="${_r[1]}"
 
     if [ "$theData" != "66666" ]; then
         _error="getBack returned an invalid data"
@@ -319,7 +318,7 @@ this->getBack(){
 
     #repeat the getBack call. Result should be the same
     list->getBack
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     if [ "$theData" != "66666" ]; then
         _error="getBack removed the last element"
         _expected="66666"
@@ -407,7 +406,7 @@ this->removeFront(){
     fi
 
     list->getFront
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     
     if [ "$theData" != "22222" ]; then
         _error="removeFront failed. The data is invalid"
@@ -447,7 +446,7 @@ this->removeBack(){
     fi
 
     list->getBack
-    local theData="$_r->0"
+    local theData="${_r[1]}"
     
     if [ "$theData" != "55555" ]; then
         _error="removeBack failed. The data is invalid"
@@ -475,7 +474,7 @@ this->pop(){
     local id6=$_r
 
     list->pop "$id3"
-    local theData="$_r->0"
+    local theData="${_r[1]}"
 
     list->size >/dev/null
     local size="$_r"
@@ -530,7 +529,7 @@ this->popFront(){
     local id6=$_r
 
     list->popFront
-    local theData="$_r->0"
+    local theData="${_r[1]}"
 
     list->size >/dev/null
     local size="$_r"
@@ -582,7 +581,7 @@ this->popBack(){
     local id6=$_r
 
     list->popBack
-    local theData="$_r->0"
+    local theData="${_r[1]}"
 
     list->size >/dev/null
     local size="$_r"

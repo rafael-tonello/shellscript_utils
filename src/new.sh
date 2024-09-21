@@ -47,7 +47,7 @@ new_f()
         new_f_id_count=$((new_f_id_count + 1))
         #add a random number to the name
         name="$name""_$(date +%s)""_$RANDOM"
-        _r="$name"5-=
+        _r="$name"
     fi
 
     if [ "$ctx" != "" ]; then

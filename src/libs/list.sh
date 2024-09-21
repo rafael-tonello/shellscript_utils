@@ -100,12 +100,14 @@ this->putAfter(){ local previousElementId=$1;
     #eval "$newElement""->data=\"\$2\""
 
 
-    local tmpCount=0
+    local tmpCount=1
     shift
+    eval "$newElement""->data=()"
     for i in "$@"; do
-        eval "$newElement""->data_$tmpCount=\"$i\""
+        eval "$newElement""->data[$tmpCount]=\"$i\""
         tmpCount=$(( tmpCount+1 ))
     done
+    tmpCount=$(( tmpCount-1 ))
     eval "$newElement""->dataCount=$tmpCount"
 
 
@@ -175,7 +177,8 @@ pushBefore(){
 #result _r_0, _r_1, _r_2, ...: each _r_i will receive the data element. Warning: the first element is r_0, not r_1 (like bash arrays, that starts in 1)
 #result _error: _error will store a error message if something goes wrong 
 this->get(){ local elementId="$1";
-    _r=0
+    unset _r
+    _r=()
     _error=""
 
     if [ "$1" == "" ]; then
@@ -186,17 +189,15 @@ this->get(){ local elementId="$1";
     #get variables starting with '$elementId' (use compgen)
     eval "local dataCount=\$$1""->dataCount"
 
-    _r="$dataCount"
     _r->size="$dataCount"
     _r->count="$dataCount"
     _r->length="$dataCount"
-    if [ "$_r" == "" ]; then
+    if [ "$dataCount" == "" ]; then
         _error="Element not found"
         return 1
     fi
-
-    for i in $(seq 0 $(( dataCount-1 ))); do
-        eval "_r->$i=\"\$$1""->data->$i\""
+    for i in $(seq 1 $(( dataCount ))); do
+        eval "_r[$i]=\"\${$1""->data[$i]}\""
     done
 }
 
@@ -280,18 +281,19 @@ this->forEach(){ local this_callback="$1"; local _firstArgAsId_="$2"
         #get the next element id before the callback, because the callback can remove the current element
         eval "tmpNextElementId=\"\$$currentElementId""->next\""
 
-        eval "dataCount=\$$currentElementId""->dataCount"
-        for i in $(seq 0 $(( dataCount-1 ))); do
-            eval "local tmpData=\"\\\$$currentElementId""->data_$i\""
-            #eval "local tmpData=\"\$$currentElementId""->data_$i\""
-            argumentList="$argumentList \"$tmpData\""
-        done
+        #eval "dataCount=\$$currentElementId""->dataCount"
+        
+        #for i in $(seq 1 $(( dataCount ))); do
+        #    eval "local tmpData=\"\\\$$currentElementId""->data_$i\""
+        #    #eval "local tmpData=\"\$$currentElementId""->data_$i\""
+        #    argumentList="$argumentList \"$tmpData\""
+        #done
 
         #eval "echo \"argumentList: $argumentList\""
         if [ "$_firstArgAsId_" == "1" ]; then
-            eval "$this_callback \"\$currentElementId\" $argumentList"
+            eval "$this_callback \"\$currentElementId\" \"\${$currentElementId""->data[@]}\""
         else
-            eval "$this_callback $argumentList"
+            eval "$this_callback  \"\${$currentElementId""->data[@]}\""
         fi
 
         eval "currentElementId=\"\$tmpNextElementId\""
@@ -310,15 +312,15 @@ this->backForEach(){ local this_callback="$1"; local _firstArgAsId_="$2"
         eval "tmpPrevElementId=\"\$$currentElementId""->prev\""
 
         eval "dataCount=\$$currentElementId""->dataCount"
-        for i in $(seq 0 $(( dataCount-1 ))); do
-            eval "local tmpData=\"\\\$$currentElementId""->data_$i\""
-            argumentList="$argumentList \"$tmpData\""
-        done
+        #for i in $(seq 0 $(( dataCount-1 ))); do
+        #    eval "local tmpData=\"\\\$$currentElementId""->data_$i\""
+        #    argumentList="$argumentList \"$tmpData\""
+        #done
 
         if [ "$_firstArgAsId_" == "1" ]; then
-            eval "$this_callback \"\$currentElementId\" $argumentList"
+            eval "$this_callback \"\$currentElementId\" $\"\${$currentElementId""->data[@]}\""
         else
-            eval "$this_callback $argumentList"
+            eval "$this_callback $\"\${$currentElementId""->data[@]}\""
         fi
 
         eval "currentElementId=\"\$tmpPrevElementId\""
@@ -355,8 +357,20 @@ this->getByIndex(){ local index=$1
 }
 
 #returns a new list object
-this->filter(){
-    echo "not implemented yet"
+#warning: filter uses error code to identify if the element is valid or not. So, the callback should return 0 if the element is valid and 1 if it is not
+this->filter(){ local predicate="$1"
+    #create new list withtout object name, 'new' will create a name and return it in '_r' variable
+    new "list.sh" ""
+    local newListObj="$_r"
+
+    this->forEach "__f(){
+        $predicate 
+        if [ \"\$?\" == "0" ]; then
+            eval \"$newListObj""->pushBack \\\"\$@\\\"\"
+        fi
+    }; __f" 1
+    _r="$newListObj"
+    echo "$newListObj"
 }
 
 #returns a new list object
@@ -372,74 +386,15 @@ this->reduce(){
 #receives the element id and a variable number of arguments that will be the new data
 this->update(){ local id=$1
     #erase old data
-    eval "local dataCount=\$$id""->dataCount"
-    for i in $(seq 0 $(( dataCount-1 ))); do
-        eval "unset $id""->data_$i"
-    done
+    eval "unset $id""->data"
 
+    local tmpCount=1
     shift
-    local tmpCount=0
+    eval "$id""->data=()"
     for i in "$@"; do
-        eval "$id""->data_$tmpCount=\"$i\""
-        tmpCount=$(( tmpCount + 1 ))
+        eval "$id""->data[$tmpCount]=\"$i\""
+        tmpCount=$(( tmpCount+1 ))
     done
+    tmpCount=$(( tmpCount-1 ))
     eval "$id""->dataCount=$tmpCount"
 }
-
-##runTests(){
-##
-##    echo "list loaded"
-##    echo "------------------------ [ insert first element (back)] ----------------------"
-##    test->pushBack "test data" "test data aaa" "test data bbb"
-##    element1Id=$_r
-##    echo "newElementId: $element1Id"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ insert second element (back)] ----------------------"
-##    test->pushBack "test data 2"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ insert third element (back)] ----------------------"
-##    test->pushBack "test data 3"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ insert forth element (after first) ] ----------------------"
-##    test->putAfter "$element1Id" "test data 4"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ insert fifth element (back) ] ----------------------"
-##    test->pushBack "test data 5"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ insert element 6 (front) ] ----------------------"
-##    test->pushFront "test data 6 - front"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ insert element 7 (front) ] ----------------------"
-##    test->pushFront "test data 7 - front"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ insert element 8 (back) ] ----------------------"
-##    test->pushBack "test data 8"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ all elements ] ----------------------"
-##    test->forEach "echo"
-##    echo "------------------------ [ all elemnts (reverse) ] ----------------------"
-##    test->backForEach "echo"
-##
-##    echo "------------------------ [ remove element $element1Id ] ----------------------"
-##    test->remove "$element1Id"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ remove first element] ----------------------"
-##    test->remove "$this->firstId"
-##    test->forEach "echo"
-##
-##    echo "------------------------ [ remove last element] ----------------------"
-##    test->remove "$this->lastId"
-##    test->forEach "echo"
-##
-##}
-
-
