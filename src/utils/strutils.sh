@@ -67,15 +67,15 @@ this->replaceSeq(){
     done;
     echo $result;
 }; 
-this->compose(){ return this->replaceSeq "$@"; }; 
-this->format(){ return this->replaceSeq "$@"; }
+this->compose(){ this->replaceSeq "$@"; return $?;}
+this->format(){ this->replaceSeq "$@"; return $?;}
 
 #use _r instead echo
 this->replaceSeq_2(){
     _r=$(this->replaceSeq "$@")
 }; 
-this->compose_2(){ return this->replaceSeq_2 "$@"; }; 
-this->format_2(){ return this->replaceSeq_2 "$@"; }
+this->compose_2(){ this->replaceSeq_2 "$@"; return $?; }
+this->format_2(){ this->replaceSeq_2 "$@"; return $?; }
 
 this->cut(){ local source=$1; local separator=$2; local p1_p2=$3
     local index=$(expr index "$source" "$separator")
