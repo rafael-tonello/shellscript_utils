@@ -195,17 +195,31 @@ this->printObject(){ local objectname=$1; local showFullNames=$2
 
 
 # error derivation functions {─ꜜꜜ↓◄┘
-    this->derivateError(){ local existingError="$1"; local newError="$2"
+    #if _checkAndNotDerivateIfOrignalErrorIsEmpty_ == 1 and exisitingError is empty, 
+    #the derivation will not be done. Instead, _error will be set with the 'newError' 
+    #text. The default value for _checkAndNotDerivateIfOrignalErrorIsEmpty_ is 1.
+    #This option is utils when you do not know if a error was really returned by another function
+    this->derivateError(){ local existingError="$1"; local newError="$2"; local _checkAndNotDerivateIfOrignalErrorIsEmpty_="$3"
+        if [ "$_checkAndNotDerivateIfOrignalErrorIsEmpty_" == "" ]; then
+            _checkAndNotDerivateIfOrignalErrorIsEmpty_=1
+        fi
         #replace all ocurrences of '└►' by '  └►'
-        existingError=$(echo "$existingError" | sed 's/└►/  └►/g')
-        newError="$newError: ▼\n  └►$existingError"
+        if [ "$_checkAndNotDerivateIfOrignalErrorIsEmpty_" != "1" ] || [ "$existingError" != "" ]; then
+            existingError=$(echo "$existingError" | sed 's/└►/  └►/g')
+            newError="$newError: ▼\n  └►$existingError"
+        fi
+
         _error="$newError"
         _r="$newError"
     }
 
-    this->derivateError2(){ local newError="$1"; local existingError="$2"
+    #if _existingError_ is empty, the _error variable will be used
+    this->derivateError2(){ local newError="$1"; local _existingError_="$2"; local _checkAndNotDerivateIfOrignalErrorIsEmpty_="$3"
+        if [ "$_existingError_" == "" ]; then
+            local _existingError_="$_error"
+        fi
         #replace all ocurrences of '└►' by '    └►'
-        this->derivateError "$existingError" "$newError"
+        this->derivateError "$_existingError_" "$newError" "$_checkAndNotDerivateIfOrignalErrorIsEmpty_"
     }
 #}
 
