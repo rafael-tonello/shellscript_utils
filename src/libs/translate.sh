@@ -10,10 +10,6 @@ this->defaultLangDir="$(pwd)/lang"
 #if destLangFile was not provided, the current system language will be assumed and the 
 #folder informed in 'this->defaultLangDir' (in the current directory) will be used
 this->init(){ local destLangFile="$1"
-
-    this->getSystemLanguage >> /tmp/test.txt
-
-
     if [ "$destLangFile" == "" ]; then
         mkdir -p "$this->defaultLangDir"
         local sysLang=$(this->getSystemLanguage)
@@ -24,19 +20,18 @@ this->init(){ local destLangFile="$1"
     new_f "$this->scriptLocation""/../utils/strutils.sh" _this->strUtils "" 0
     this->cutChar="="
     
-
     _this->destLangFile="$(realpath "$destLangFile")"
     _this->notFoundsFile="$(realpath "$destLangFile_notFounds")"
     
-
     _this->loadTranslationFile "$destLangFile"
     _this->loadTranslationsNotFoundFile "$_this->notFoundsFile"
-
-
 }
 
 this->getSystemLanguage(){
     local sysLang=$(locale | grep LANG | cut -d= -f2 | cut -d. -f1)
+    if [ "$sysLang" == "C" ]; then
+        sysLang="en_US.UTF-8"
+    fi
     echo $sysLang
 }
 
