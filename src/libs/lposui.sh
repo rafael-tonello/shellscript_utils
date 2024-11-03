@@ -308,12 +308,12 @@ this->_draw(){
 
 this->show(){
     lposui_current=this
-    this->forceRepaint
+    this->_forceRepaint
 }
 
 this->_forceRepaint(){
     tput clear
-    this->draw
+    this->_draw
 }
 
 #this->drawLabel(labelNumber)
