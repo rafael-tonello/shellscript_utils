@@ -24,6 +24,7 @@ createLogLevel()
     local levelNumber=$2
     local color=$3
     eval "$name=$levelNumber"
+    eval "LOGGER_""$name=$levelNumber"
     eval "${name,,}=$levelNumber"
     eval "${name^^}=$levelNumber"
     eval "LVLSTR_$levelNumber=$name"
@@ -51,6 +52,10 @@ createLogLevel "CRITICAL" 60 '\033[0;31m'
 
 #declare an array of strings
 
+LOGGER_IDENT=1
+LOGGER_DOTNOIDENT=0
+LOGGER_USEMILISECONDS=1
+LOGGER_DONTUSEMILISECONDS=0
 
 #[log_levels_def_$INFO], [ident_data_default_1]
 this->init(){ local alowedloglevels=$1; local identData=$2; local useMiliseconds=$3
@@ -163,6 +168,7 @@ this->interceptCommandStdout(){ local logSessionName=$1; local level=$2; local c
 
             if [ "$errorTokenIsPresent" == "1" ]; then
                 this->log "$logSessionName" "$ERROR" "$line" 1 1
+                _error="$line"
             else
                 this->log "$logSessionName" $level "$line"
             fi
@@ -170,6 +176,9 @@ this->interceptCommandStdout(){ local logSessionName=$1; local level=$2; local c
             this->log "$logSessionName" $level "$line"
         fi
     done
+
+    #return the command result code
+    return ${PIPESTATUS[0]}
 }
 
 #name, text, [break_line_default_1]
