@@ -4,8 +4,8 @@ if [ "$1" != "new" ]; then >&2 echo "This must be included through the 'new_f' f
 #remote_host, username, pasword, use_sudo_0or1
 
 dirname=$3
-echo "$dirname"
 autoinit=0; new "utils/strutils.sh" this->strUtils
+autoinit=0; new "utils/utils.sh" this->utils
 
 this->init() { 
     this->host=$1
@@ -18,8 +18,7 @@ this->init() {
 
     _this->testConnection
     if [ "$?" != "0" ]; then
-        _r="Error: ssh connetion cannot be made to the destination ==> $_r"
-        echo $_r
+        this->utils->derivateError "$_error" "Error: ssh connetion cannot be made to the destination"
         return 1
     fi
 
@@ -27,17 +26,18 @@ this->init() {
 }
 
 _this->testConnection(){
+    _error=""
     ping -c 1 $this->host > /dev/null 2>/dev/null
     local ping_result=$?
     if [ "$ping_result" != "0" ]; then
-        _r="The destination host ($this->host) is unreachable"
+        _error="The destination host ($this->host) is unreachable"
 
         return $ping_result
     else
         this->runCmd "echo"
         local echo_result=$?
         if [ "$echo_result" != "0" ]; then
-            _r="Error running a test command on remote host ($this->host) ==> $_error"
+            this->utils->derivateError "$_error" "Error running a test command on remote host ($this->host)"
             return $echo_result
         fi;
     fi
@@ -46,6 +46,7 @@ _this->testConnection(){
 
 #cmd
 this->runCmd(){
+    _error=""
     #echo "Running: sshpass -p \"$this->password\" /usr/bin/ssh $this->username@$this->host \"$this->useSudo $1\""
     rm /tmp/runCmdResult >/dev/null 2> /dev/null
     (sshpass -p "$this->password" /usr/bin/ssh $this->username@$this->host "$this->useSudo $1") > /tmp/runCmdResult 2> /tmp/runCmdResult
@@ -54,10 +55,10 @@ this->runCmd(){
     this->strUtils->getOnly_2 "$_r" "abcdefghijklmnopqrstuvxywzABCDEFGHIJKLMNOPQRSTUVXYWZ0123456789_=> " #removes some line returns and other strange chars from ssh output
     #_r=$_r
     if [ "$_retCode" != "0" ]; then
-        _error=$_r
+        #_error=$_r
+        this->utils->derivateError "$_error" "$_r"
         if [[ $_error == *"Permission denied"* ]]; then
-            _error=$_r
-            _error="$_error (username or password may be wrong or another authentication error may have occurred)"
+            this->utils->derivateError "$_error" "username or password may be wrong or another authentication error may have occurred"
         fi
         _r=""
     fi
@@ -91,8 +92,8 @@ this->uploadFile(){
     return $?
 }
 
-#remote_origin, remote_destination, #progresscallback. This function runs with subshell and uses 'script' instead sshpass
-this->uploadFileWithProgress(){
+#originstring, destinationstring, #progresscallback. This function runs with subshell and uses 'script' instead sshpass
+this->transferFileWithProgress(){
     local origin="$1"
     local dest="$2"
     local callback="$3"
@@ -134,7 +135,7 @@ this->uploadFileWithProgress(){
         done
     }; __f &)
 
-    { sleep 2; echo $this->password; } | script -q /dev/null -c "/usr/bin/scp \"$origin\" $this->username@$this->host:\"$dest\"" > $progressFile
+    { sleep 2; echo $this->password; } | script -q /dev/null -c "/usr/bin/scp \"$originstring\" \"$destinationstring\"" > $progressFile
     local retCode=$?
     
     echo "stop"> $doneFile
@@ -147,6 +148,12 @@ this->uploadFileWithProgress(){
     done
 
     return $retCod
+}
+
+
+this->uploadFileWithProgress(){
+    this->transferFileWithProgress "$1" "$this->username@$this->host:\"$2\"" "$3"
+    return $?
 }
 
 #_this_get_onlye(source, [valid_chars])
@@ -177,4 +184,23 @@ _this_get_only(){
     # Print the valid string
     _r=$valid_string
     return 0
+}
+
+this->downloadFile(){
+    local origin=$1
+    local dest=$2
+    sshpass -p $this->password /usr/bin/scp $this->username@$this->host:"$origin" "$dest"
+    return $?
+}
+
+this->downloadFolder(){
+    local origin=$1
+    local dest=$2
+    sshpass -p $this->password /usr/bin/scp -r $this->username@$this->host:"$origin" "$dest"
+    return $?
+}
+
+this->downloadFileWithProgress(){
+    this->transferFileWithProgress "$this->username@$this->host:\"$1\"" "$2" "$3"
+    return $?
 }
