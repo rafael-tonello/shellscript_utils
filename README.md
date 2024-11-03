@@ -365,5 +365,6 @@ The `shellscript_utils` project also contains some embedded libraries that can b
 ```
     todo:
     [ ] use a mutex (var lock/unlock) in eventbus
-    [ ] user a mute (var lock/unlock) in queue
+    [ ] use a mute (var lock/unlock) in queue
+    [ ] replace referenced vars attributes to use declare -n (bash references) insteas eval
 ```
