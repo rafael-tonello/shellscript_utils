@@ -86,7 +86,8 @@ new_f()
 
     ret=$(pwd)
 
-    
+    #finalize a possible old instance
+    finalize "$name"
 
     rm -f "$fileName.c.sh" 2>/dev/null
 
@@ -195,24 +196,24 @@ new () { local className=$1;
     return $?
 }
 
-inherit_f(){ local parentClassFile=$1; local childObjectName=$2; lcoal _this_key_=$3
+inherit_f(){ local parentClassFile="$1"; local childObjectName="$2";
 
-    new_f "$parentClassFile" "$childObjectName" "$_this_key_" 0
+    autoinit=0; new_f "$parentClassFile" "$childObjectName" "$" 0
 
     #get the parent class name (filename without extension and directory)
     local parentClassName=$(basename "$parentClassFile")
     parentClassName="${parentClassName%.*}"
 
-    _replaceMethodsAndVarsWithObjectName "$childObjectName" "$childObjectName""_""$parentClassName"    
+    _copyMethodsAndVarsToNewObject "$childObjectName" "$childObjectName""_""$parentClassName"    
 }
 
-inherit(){ local parentClassName=$1; local childObjectName=$2; local _this_key_=$3
+inherit(){ local parentClassName=$1; local childObjectName=$2;
 
-    autoinit=0; new "$parentClassName" "$childObjectName" "$_this_key_"
+    autoinit=0; new "$parentClassName" "$childObjectName"
 
     #local parentFuncs=$(compgen -A function | grep "^$childObjectName""_")
 
-    _replaceMethodsAndVarsWithObjectName "$childObjectName" "$childObjectName""_""$parentClassName"
+    _copyMethodsAndVarsToNewObject "$childObjectName" "$childObjectName""_""$parentClassName"
 
 }
 
@@ -222,9 +223,12 @@ finalize(){ local objectName="$1"; local _callFinalizeMethod_def1="$2"
     fi
 
     if [ "$_callFinalizeMethod_def1" == "1" ] || [ "$_callFinalizeMethod_def1" == "true" ]; then
-        shift
-        shift
-        eval "$objectName""_finalize" "new.sh" "$@"
+        #check if the finalize method exists
+        if [ "$(type -t "$objectName""_finalize")" == "function" ]; then
+            shift
+            shift
+            eval "$objectName""_finalize" "new.sh" "$@"
+        fi
     fi
 
     #unset all variables started with '$objectName'
@@ -244,9 +248,11 @@ finalize(){ local objectName="$1"; local _callFinalizeMethod_def1="$2"
 destroy(){ finalize "$@"; }
 freeObject(){ finalize "$@"; }
 
-_replaceMethodsAndVarsWithObjectName(){ local objectName=$1; local newObjectName=$2
+_copyMethodsAndVarsToNewObject(){ local objectName=$1; local newObjectName=$2
     
     local parentFuncs=$(compgen -A function | grep "^$objectName""_")
+    
+
 
     #copy all functions from new object to 'childObjectName_base' object
     for i in $parentFuncs; do
