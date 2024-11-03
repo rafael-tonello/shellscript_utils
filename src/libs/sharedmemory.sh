@@ -10,6 +10,9 @@
 
 #if [ "$1" != "new" ]; then echo "sourcing"; source <(curl -s "https://raw.githubusercontent.com/rafael-tonello/shellscript_utils/main/libs/new.sh"); new_f "$0" __app__; exit 0; fi
 
+#You can use this class like a simple key-db if you specify a custom _storageDirectory_ in the init function, but it is not recommended (if you 
+#need a key-value db, use the 'keyvaluestorage' class). The main purpose of this class is to share data between different threads and process.
+
 #initializes thes shared memory. The first parameter is the namespace. The second parameter (optional) is the 
 #directory where the shared memory will be stored. If the _storageDirectory_ is not provided, the shared memory will be stored in /dev/shm
 this->init(){ local namespace="$1"; local _storageDirectory_="$2"
